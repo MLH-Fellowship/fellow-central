@@ -1,0 +1,28 @@
+:root {
+  // Primary
+  --primary-color: #1D539F;
+  --primary-color-rgb: 29, 83, 159;
+  --primary-color-5: rgba(29, 83, 159, 0.05);
+  @for $i from 2 through 19 {
+    --primary-color-#{$i * 5}: rgba(29, 83, 159, 0.#{$i * 5});
+  }
+
+  // Background
+  --background-color: #EFF1F5;
+
+  // Red
+  --red-color: #BB4239;
+  --red-color-rgb: 187, 66, 57;
+  --red-color-5: rgba(187, 66, 57, 0.05);
+  @for $i from 2 through 19 {
+    --red-color-#{$i * 5}: rgba(187, 66, 57, 0.#{$i * 5});
+  }
+
+  // Yellow
+  --yellow-color: #E2AC31;
+  --yellow-color-rgb: 226, 172, 49;
+  --yellow-color-5: rgba(226, 172, 49, 0.05);
+  @for $i from 2 through 19 {
+    --yellow-color-#{$i * 5}: rgba(226, 172, 49, 0.#{$i * 5});
+  }
+}

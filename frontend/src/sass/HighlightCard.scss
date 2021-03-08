@@ -1,0 +1,28 @@
+.HighlightCard {
+  background-color: var(--primary-color);
+  border-radius: 20px;
+  overflow: hidden;
+  color: white;
+  padding: 25px;
+  position: relative;
+}
+
+.HighlightCard_text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.HighlightCard_value {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.HighlightCard_icon {
+  font-size: 6rem;
+  position: absolute;
+  bottom: -35px;
+  right: -17px;
+  color: white;
+  opacity: 0.15;
+}

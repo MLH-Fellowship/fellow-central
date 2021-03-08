@@ -1,0 +1,30 @@
+.PageHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.PageHeader_left {
+  flex: 1;
+  display: flex;
+}
+
+.PageHeader_right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.PageHeader_title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.PageHeader_logout {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-left: 25px;
+  display: flex;
+}

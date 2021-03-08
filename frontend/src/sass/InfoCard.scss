@@ -1,0 +1,18 @@
+.InfoCard {
+  background-color: white;
+  border-radius: 20px;
+  overflow: hidden;
+  color: var(--primary-color);
+  padding: 25px;
+}
+
+.InfoCard_title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.InfoCard_value {
+  font-size: 3rem;
+  font-weight: 700;
+}

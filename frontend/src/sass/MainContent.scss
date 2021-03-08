@@ -1,0 +1,14 @@
+.MainContent {
+  flex: 1;
+  background-color: var(--primary-color-5);
+  padding: 60px 50px;
+}
+
+.switch-wrapper {
+  position: relative;
+}
+
+.switch-wrapper > div {
+  position: absolute;
+  width: 100%;
+}
