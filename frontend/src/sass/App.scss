@@ -1,0 +1,43 @@
+@import "partials/colors";
+@import "partials/forms";
+@import "partials/tabs";
+
+.content {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+.highlights-container {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 30px;
+}
+
+.page-content-container {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 30px;
+}
+
+.info-collection {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+  &_item {
+    color: var(--primary-color);
+  }
+
+  &_value {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  &_title {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+}
+

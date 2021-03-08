@@ -1,0 +1,39 @@
+.UserInfo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 50px;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.UserInfo_image {
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-right: 17px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.UserInfo_text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--primary-color);
+
+  &_name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  &_pod {
+    font-size: 0.9rem;
+    color: var(--primary-color-70);
+  }
+}

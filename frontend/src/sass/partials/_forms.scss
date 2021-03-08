@@ -1,0 +1,24 @@
+.form-fields {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
+}
+
+.input-group {
+  color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  input {
+    padding: 12px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color-5);
+    outline: none;
+  }
+}

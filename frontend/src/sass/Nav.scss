@@ -1,0 +1,27 @@
+.Nav_link {
+  color: var(--primary-color-60);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px 35px;
+
+  &:hover {
+    background-color: var(--primary-color-5);
+  }
+
+  &_icon {
+    margin-right: 18px;
+    display: flex;
+    font-size: 1.2rem;
+  }
+
+  &_text {
+    font-weight: 700;
+  }
+}
+
+.Nav-link-selected .Nav_link {
+  color: var(--primary-color);
+  background-color: var(--primary-color-5);
+}
