@@ -5,6 +5,7 @@ Backend server of Fellow Central.
 ## Technologies Used
 
 - Flask
+- PostgreSQL
 
 ## Setup Dev Enviroment
 
@@ -23,6 +24,18 @@ Backend server of Fellow Central.
 4. Install dependencies
     ```bash
     pip install -r requirements.txt
+    ```
+
+5. (optional) Set flask development environment - enables debug mode
+
+    Windows:
+    ```bash
+    set FLASK_ENV=development
+    ```
+
+    Linux:
+    ```bash
+    export FLASK_ENV=development
     ```
 
 5. Run Flask server locally
