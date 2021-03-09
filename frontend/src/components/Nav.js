@@ -2,6 +2,7 @@ import React from 'react'
 import '../sass/Nav.scss'
 import { Icon } from '@iconify/react';
 import bxsDashboard from '@iconify-icons/bx/bxs-dashboard';
+import bxCalendarEvent from '@iconify-icons/bx/bx-calendar-event';
 import bxsTrophy from '@iconify-icons/bx/bxs-trophy';
 import conditionWaitPoint from '@iconify-icons/carbon/condition-wait-point';
 import {
@@ -26,6 +27,15 @@ const Nav = () => {
             <Icon icon={bxsTrophy} />
           </div>
           <div className="Nav_link_text">Leaderboard</div>
+        </div>
+      </NavLink>
+      
+      <NavLink to="events" style={{ textDecoration: 'none' }} activeClassName="Nav-link-selected">
+        <div className="Nav_link">
+          <div className="Nav_link_icon">
+            <Icon icon={bxCalendarEvent} />
+          </div>
+          <div className="Nav_link_text">Events</div>
         </div>
       </NavLink>
 
