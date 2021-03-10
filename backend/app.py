@@ -5,11 +5,11 @@ import os
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"
 
-DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
-DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
+DISCORD_CLIENT_ID = os.environ("DISCORD_CLIENT_ID")
+DISCORD_CLIENT_SECRET = os.environ("DISCORD_CLIENT_SECRET")
 REDIRECT_URI = "http://127.0.0.1:5000/discord/callback"
 FELLOWSHIP_GUILD_ID = "818888976458973224"
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.environ("BOT_TOKEN")
 CURRENT_FELLOWSHIP = "0"
 
 @app.route("/")
@@ -19,7 +19,7 @@ def index():
 
 @app.route('/discord')
 def discord():
-    return redirect("https://discord.com/api/oauth2/authorize?client_id=818733316948623370&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fdiscord%2Fcallback&response_type=code&scope=guilds%20identify%20email")
+    return redirect(f"https://discord.com/api/oauth2/authorize?client_id=818733316948623370&redirect_uri={REDIRECT_URI}&response_type=code&scope=guilds%20identify%20email")
 
 @app.route("/discord/callback")
 def discord_callback():
