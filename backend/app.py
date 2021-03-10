@@ -5,11 +5,11 @@ import os
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"
 
-DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
-DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
+DISCORD_CLIENT_ID = os.environ("DISCORD_CLIENT_ID")
+DISCORD_CLIENT_SECRET = os.environ("DISCORD_CLIENT_SECRET")
 REDIRECT_URI = "http://127.0.0.1:5000/discord/callback"
 FELLOWSHIP_GUILD_ID = "818888976458973224"
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.environ("BOT_TOKEN")
 CURRENT_FELLOWSHIP = "0"
 
 @app.route("/")
