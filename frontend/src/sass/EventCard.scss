@@ -1,0 +1,60 @@
+.EventCard {
+  background-color: white;
+  color: var(--primary-color);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.EventCard_Header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.EventCard_Content {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.EventCard_DateTime {
+  padding: 15px 20px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.EventCard_Link {
+  font-size: 1.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 18px 0 10px;
+  cursor: pointer;
+
+  a {
+    color: var(--primary-color);
+  }
+}
+
+.EventCard_Title {
+  font-weight: 600;
+  font-size: 1.3rem;
+  flex: 1;
+}
+
+.EventCard_Content_Primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.EventCard_Content_Secondary {
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
