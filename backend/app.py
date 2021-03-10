@@ -1,21 +1,46 @@
 from flask import Flask, redirect, sessions, request, jsonify, session
+from flask_sqlalchemy import SQLAlchemy
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DISCORD_CLIENT_ID = os.environ['DISCORD_CLIENT_ID']
+DISCORD_CLIENT_SECRET = os.environ['DISCORD_CLIENT_SECRET']
+REDIRECT_URI = 'http://127.0.0.1:5000/discord/callback'
+FELLOWSHIP_GUILD_ID = '818888976458973224'
+BOT_TOKEN = os.environ['BOT_TOKEN']
+CURRENT_FELLOWSHIP = '0'
+
+DB_USER = os.environ['DB_USER']
+DB_PW = os.environ['DB_PW']
+DB_HOST = os.environ['DB_HOST']
+DB_PORT = os.environ['DB_PORT']
+DB_NAME = os.environ['DB_NAME']
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "secretkey"
+app.config['SECRET_KEY'] = 'secretkey'
 
-DISCORD_CLIENT_ID = os.environ("DISCORD_CLIENT_ID")
-DISCORD_CLIENT_SECRET = os.environ("DISCORD_CLIENT_SECRET")
-REDIRECT_URI = "http://127.0.0.1:5000/discord/callback"
-FELLOWSHIP_GUILD_ID = "818888976458973224"
-BOT_TOKEN = os.environ("BOT_TOKEN")
-CURRENT_FELLOWSHIP = "0"
+db_uri = 'postgresql://{dbuser}:{dbpw}@{dbhost}:{dbport}/{dbname}'.format(
+    dbuser=DB_USER,
+    dbpw=DB_PW,
+    dbhost=DB_HOST,
+    dbport=DB_PORT,
+    dbname=DB_NAME
+)
+
+app.config.update(
+    SQLALCHEMY_DATABASE_URI=db_uri,
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+)
+
+db = SQLAlchemy(app)
+
 
 @app.route("/")
 def index():
     return f"Hello {session.get('username')}#{session.get('discriminator')} @ {session.get('role')}"
-
 
 @app.route('/discord')
 def discord():
@@ -96,7 +121,6 @@ def discord_callback():
 
     # redirect to homepage
     return redirect("/")
-
 
 if __name__ == '__main__':
     app.run()
