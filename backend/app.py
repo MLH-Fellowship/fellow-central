@@ -122,5 +122,9 @@ def discord_callback():
     # redirect to homepage
     return redirect("/")
 
+@app.route("admin/create_event")
+def create_event():
+    pass
+
 if __name__ == '__main__':
     app.run()
