@@ -2,13 +2,16 @@
   // Primary
   --primary-color: #1D539F;
   --primary-color-rgb: 29, 83, 159;
-  --primary-color-5: rgba(29, 83, 159, 0.05);
+  --primary-color-5: #F3F6FA;
   @for $i from 2 through 19 {
     --primary-color-#{$i * 5}: rgba(29, 83, 159, 0.#{$i * 5});
   }
 
   // Background
   --background-color: #EFF1F5;
+
+  // Blue Light
+  --blue-light-color: #F5F8FD;
 
   // Red
   --red-color: #BB4239;

@@ -22,3 +22,17 @@ Frontend web app of Fellow Central.
     ```bash
     npm run start
     ```
+
+## Debugging
+
+### Dependencies
+
+If you run into any dependency issues:
+
+1. Delete `node_modules/` folder.
+
+2. Run `npm install`
+
+### Redux
+
+Use [this chrome extenstion](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) for debugging Redux state.

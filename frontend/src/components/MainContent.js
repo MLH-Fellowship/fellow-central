@@ -1,9 +1,10 @@
 import React from 'react'
 import '../sass/MainContent.scss'
 import { spring, AnimatedSwitch } from 'react-router-transition';
-import Dashboard from './DashboardPage'
-import Leaderboard from './LeaderboardPage'
-import ClaimPoints from './ClaimPointsPage'
+import DashboardPage from './DashboardPage'
+import EventsPage from './EventsPage'
+import LeaderboardPage from './LeaderboardPage'
+import ClaimPointsPage from './ClaimPointsPage'
 
 import {
   Route,
@@ -56,13 +57,16 @@ const MainContent = () => {
         className="switch-wrapper"
       >
         <Route path="/dashboard">
-          <Dashboard />
+          <DashboardPage />
         </Route>
         <Route path="/leaderboard">
-          <Leaderboard />
+          <LeaderboardPage />
+        </Route>
+        <Route path="/events">
+          <EventsPage />
         </Route>
         <Route path="/claim-points">
-          <ClaimPoints />
+          <ClaimPointsPage />
         </Route>
       </AnimatedSwitch>
     </div>

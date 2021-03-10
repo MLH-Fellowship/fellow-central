@@ -1,0 +1,76 @@
+.LeaderboardPage_ActiveEvents, .LeaderboardPage_PastEvents {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 2.3rem;
+  margin-bottom: 20px;
+}
+
+/* Claim Points modal */
+.EventClaimPointsModal_Title {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.EventClaimPointsModal_Desc {
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.EventClaimPointsModal_Content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #fff;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+  outline: none;
+  padding: 30px;
+  overflow: hidden;
+}
+
+.EventClaimPointsModal_Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary-color-50);
+}
+
+.EventClaimPointsModal_Close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border: none;
+  outline: none;
+  background-color: white;
+  color: var(--primary-color);
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--blue-light-color);
+  }
+}
+
+.EventClaimPointsModal_Icon {
+  position: absolute;
+  bottom: -35px;
+  right: -17px;
+  color: var(--primary-color-5);
+  font-size: 8rem;
+  z-index: -1;
+}
