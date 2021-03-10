@@ -18,6 +18,7 @@
   display: grid;
   grid-auto-flow: row;
   gap: 30px;
+  margin-bottom: 40px;
 }
 
 .info-collection {
@@ -41,3 +42,23 @@
   }
 }
 
+.page-subtitle {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* React Modal animation */
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+  opacity: 0;
+}
