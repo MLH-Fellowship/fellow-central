@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   token: sessionStorage.getItem('token') || null,
 }
 
-export default (state = INITIAL_STATE, action) => {
+export default function authReducer (state = INITIAL_STATE, action) {
   switch(action.type) {
     case SIGN_IN:
       sessionStorage.setItem('token', action.payload.token)
