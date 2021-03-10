@@ -1,4 +1,4 @@
-.LoginPage {
+.SignupPage {
   background: repeating-linear-gradient(
     160deg,
     var(--primary-color),
@@ -9,28 +9,33 @@
   color: white;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.LoginPageBox {
+.SignupPageBox {
   background-color: white;
   padding: 25px 25px;
   border-radius: 20px;
   color: var(--primary-color);
-  min-width: 300px;
-  margin: 40px 0;
+  min-width: 350px;
+  margin: 40px 0 20px 0;
 }
 
-.LoginPageBox_title {
+.SignupPageBox_title {
   text-align: center;
   font-size: 2.4rem;
   font-weight: 700;
   margin-bottom: 35px;
 }
 
-.LoginPageBox_buttons {
+.SignupPageBox_buttons {
   display: grid;
   grid-auto-flow: row;
   gap: 15px;
+}
+
+.SignupPage_LogoutButton {
+  color: white;
 }

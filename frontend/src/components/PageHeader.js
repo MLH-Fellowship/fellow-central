@@ -2,9 +2,14 @@ import React from 'react'
 import '../sass/PageHeader.scss'
 import { Icon } from '@iconify/react';
 import logoutLine from '@iconify-icons/majesticons/logout-line';
+import { connect } from 'react-redux'
+import { signOut } from '../actions'
 
+const PageHeader = ({ title, children, ...props }) => {
+  const handleSignout = () => {
+    props.signOut();
+  }
 
-const PageHeader = ({ title, children }) => {
   return (
     <div className="PageHeader">
       <div className="PageHeader_left">
@@ -16,7 +21,7 @@ const PageHeader = ({ title, children }) => {
         <div className="PageHeader_slot">
           {children}
         </div>
-        <div className="PageHeader_logout">
+        <div className="PageHeader_logout" onClick={handleSignout}>
           <Icon icon={logoutLine} />
         </div>
       </div>
@@ -24,4 +29,4 @@ const PageHeader = ({ title, children }) => {
   )
 }
 
-export default PageHeader
+export default connect(null, { signOut })(PageHeader)

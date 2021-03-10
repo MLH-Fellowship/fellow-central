@@ -39,7 +39,7 @@ const DashboardPage = () => {
         <InfoCard title="Activity this week">
           <div className="info-collection">
             {infoCollection.map(({ value, title }) => 
-              <div className="info-collection_item">
+              <div key={title} className="info-collection_item">
                 <div className="info-collection_value">{value}</div>
                 <div className="info-collection_title">{title}</div>
               </div>
