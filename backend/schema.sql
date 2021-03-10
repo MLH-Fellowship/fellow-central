@@ -6,7 +6,27 @@
 *
 */
 
--- Users
+/** Roles Enum
+*   Use an enum to prevent using varchar for user roles
+*
+*/
+
+CREATE TYPE roles AS ENUM ('admin', 'fellow');
+
+/** Users
+*   
+*
+*/
+
+CREATE TABLE Users (
+    UserID INTEGER,
+    DisplayName VARCHAR(255) NOT NULL,
+    Role roles NOT NULL,
+    Pod INTEGER NOT NULL,
+    Points INTEGER NOT NULL,
+    Email VARCHAR(255),
+    PRIMARY KEY (UserID)
+)
 
 /** Events
 *   SecretCode will likely follow LHD Build Convention
