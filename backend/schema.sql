@@ -1,23 +1,44 @@
--- Database schemas
+/** Database schemas
+*   Entries of the database schema.
+*   Users table is the collection of all available users of our app.
+*   Events is the collection of all events during our Fellowship.
+*   Points is the record of all the points earned for fellows.
+*
+*/
 
--- User
+-- Users
 
--- Events
+/** Events
+*   SecretCode will likely follow LHD Build Convention
+*   Description could be improved from being a varchar to just being a blob on the server
+*
+*/
+
 CREATE TABLE Events (
-    Name VARCHAR(255),
-    Link VARCHAR(255),
-    StartTime TIMESTAMP WITH TIME ZONE,
-    EndTime TIMESTAMP WITH TIME ZONE,
-    Points INTEGER,
-    SecretCode SMALLINT, --Probably going to follow LHD Build convention
-    Description VARCHAR(510), -- Could probably use a text based format instead of varchar, like referencing a file on server? I wouldn't know
+    EventID INTEGER,
+    Name VARCHAR(255) NOT NULL,
+    Link VARCHAR(255) NOT NULL,
+    StartTime TIMESTAMP WITH TIME ZONE NOT NULL,
+    EndTime TIMESTAMP WITH TIME ZONE NOT NULL,
+    Points VARCHAR(255) NOT NULL,
+    SecretCode SMALLINT NOT NULL,
+    Description VARCHAR(510),
+    PRIMARY KEY (ID),
 )
 
--- Points
+/** Points
+*   Assignee has relation to User
+*   Event has relation to Event
+*   TimeStamp is time when secret code was entered. Useful for audit.
+*
+*/
+
 CREATE TABLE Points (
-    Asignee, -- Relation to "User" although why can't we just name this "user"?
-    Event, -- Relation to "Event"
-    TimeStamp, -- Time when code was entered. Although, is this necessary?
-    Amount, -- Probably redundant if we have a link to "Event"
-    Description, -- Again, probably redundant
+    InstanceID INTEGER,
+    Assignee NOT NULL,
+    Event NOT NULL,
+    TimeStamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    PRIMARY KEY (Instance),
+    FOREIGN KEY (Assignee) REFERENCES Users(UserID),
+    FOREIGN KEY (Event) REFERENCES Events(EventID)
 )
