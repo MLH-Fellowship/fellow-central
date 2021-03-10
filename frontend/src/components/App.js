@@ -10,7 +10,7 @@ import MainContent from './MainContent';
 import LoginPage from './LoginPage';
 // import SignupPage from './SignupPage';
 
-function App({ isSignedIn = false, showSignup = true, user = {} }) {
+function App({ isSignedIn = false, showSignup = true, role }) {
   return (
     <Router>
       <div className="App">
@@ -22,7 +22,12 @@ function App({ isSignedIn = false, showSignup = true, user = {} }) {
                 <MainContent />
               </div>
               <Route exact path="/">
-                <Redirect to="/dashboard" />
+                {role === 'admin' &&
+                  <Redirect to="/admin-dashboard" />
+                }
+                {role === 'fellow' &&
+                  <Redirect to="/dashboard" />
+                }
               </Route>
             </>
             {/*user.role && user.pod && user.name ?
@@ -56,7 +61,7 @@ function App({ isSignedIn = false, showSignup = true, user = {} }) {
 const mapStateToProps = (state) => {
   return {
     isSignedIn: state.auth.isSignedIn,
-    user: state.auth.user,
+    role: state.auth.user?.role,
     showSignup: state.auth.showSignup
   }
 }

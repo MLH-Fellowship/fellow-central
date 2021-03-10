@@ -14,7 +14,7 @@ const LoginPage = (props) => {
       user: {
         discordId: 'PawanKolhe#7887',
         email: 'contact@pawankolhe.com',
-        role: 'fellow',
+        role: 'admin',
         pod: '2.0.0',
         name: 'Pawan Kolhe'
       }
