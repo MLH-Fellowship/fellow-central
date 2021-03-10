@@ -48,7 +48,7 @@
   --stripe-size: 800px;
   --color1: #285CA4;
   --color2: #1D539F;
-  --duration: 12s;
+  --duration: 18s;
 
   &::before {
     content: '';
@@ -58,7 +58,7 @@
     width: calc(100% + var(--stripe-size));
     height: 100%;
     background: repeating-linear-gradient(
-      135deg,
+      45deg,
       var(--color2) 25%,
       var(--color2) 50%,
       var(--color1) 50%,

@@ -12,6 +12,10 @@
   font-family: 'Work Sans', sans-serif;
   outline: none;
   border: none;
+
+  &:hover {
+    opacity: 0.95;
+  }
 }
 
 .LoginButton_icon {
