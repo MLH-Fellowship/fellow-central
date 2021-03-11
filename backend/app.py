@@ -149,7 +149,28 @@ def discord_callback():
 
 @app.route("/admin/create_event")
 def create_event():
-    pass
+    if request.method == 'POST':
+        # enter the values provided by the form
+        event_name = request.form['name']
+        start_time_f = request.form['start_time_f']
+        end_time_f = request.form['end_time_f']
+        link = request.form['link']
+        secret_code_f = request.form['secret_code']
+        points = request.form['points']
+
+        new_event = Event(name=event_name, start_time=start_time,
+                          end_time=end_time_f,
+                          points_amount=points,
+                          secret_code=secret_code_f,
+                          event_link=link)
+
+        db.session.add(new_event)
+        db.session.commit()
+
+        return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
+
+    else:
+        abort(405)
 
 if __name__ == '__main__':
     with app.app_context():
