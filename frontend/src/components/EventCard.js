@@ -5,7 +5,7 @@ import bxLinkExternal from '@iconify-icons/bx/bx-link-external';
 import bxVideo from '@iconify-icons/bx/bx-video';
 import Button from './Button'
 
-const EventCard = ({ title, start, link, vod, isActive = false, onClaimPointsClick }) => {
+const EventCard = ({ id, title, start, link, vod, isActive = false, pointsClaimed, onClaimPointsClick }) => {
   return (
     <div className="EventCard">
       <div className="EventCard_Header">
@@ -20,7 +20,7 @@ const EventCard = ({ title, start, link, vod, isActive = false, onClaimPointsCli
       </div>
       <div className={`EventCard_Content ${isActive ? 'EventCard_Content_Primary' : 'EventCard_Content_Secondary'}`}>
         <div className="EventCard_Title">{title}</div>
-        {isActive &&
+        {isActive && !pointsClaimed &&
           <Button text="Claim Points" buttontype="secondary" style={{ marginTop: '20px', alignSelf: 'flex-start' }} onClick={() => onClaimPointsClick()} />
         }
       </div>

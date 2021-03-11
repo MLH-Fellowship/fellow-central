@@ -1,4 +1,11 @@
-import { SIGN_IN, SIGN_OUT, UPDATE_PROFILE } from './types'
+import { 
+  SIGN_IN, 
+  SIGN_OUT, 
+  UPDATE_PROFILE,
+
+  SET_EVENTS,
+  CLAIM_EVENT_POINTS,
+} from './types'
 
 export const signIn = ({ user, token }) => {
   return {
@@ -20,3 +27,16 @@ export const updateProfile = (user) => {
   }
 }
 
+export const setEvents = (events) => {
+  return {
+    type: SET_EVENTS,
+    payload: events
+  }
+}
+
+export const claimEventPoints = (id) => {
+  return {
+    type: CLAIM_EVENT_POINTS,
+    payload: id
+  }
+}

@@ -4,6 +4,14 @@
   grid-auto-flow: row;
 }
 
+.form-fields-row {
+  display: flex;
+  gap: 18px;
+  grid-auto-flow: row;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 .input-group {
   color: var(--primary-color);
   display: flex;
