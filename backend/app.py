@@ -42,6 +42,7 @@ db.init_app(app)
 def index():
     return f"Hello {session.get('username')}#{session.get('discriminator')} @ {session.get('role')}"
 
+
 @app.route('/discord')
 def discord():
     full_redirect_url = 'https://discord.com/api/oauth2/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}'.format(
@@ -65,7 +66,7 @@ def discord_callback():
         'code': request.args.get("code"),
         'redirect_uri': REDIRECT_URI,
         'scope': 'identify email guilds'
-    }, headers = {
+    }, headers={
         'Content-Type': 'application/x-www-form-urlencoded'
     })
 
@@ -99,9 +100,11 @@ def discord_callback():
             in_fellowship = True
 
     if not in_fellowship:
-        return "Error, this is for current MLH Fellows only!"
-
-    if in_fellowship:
+        response = {
+            "success": False,
+            "message": "Error: User is not a current MLH fellow!"
+        }
+    else:
         role = requests.get(f"https://discord.com/api/v8/guilds/{FELLOWSHIP_GUILD_ID}/members/{session.get('discord_id')}", headers={
             "Authorization": f"Bot {BOT_TOKEN}"
         })
@@ -127,8 +130,30 @@ def discord_callback():
         db.session.add(new_user)
         db.session.commit()
 
-    # redirect to homepage
-    return redirect("/")
+        # create and add a new user if doesn't exist
+        if User.query.filter_by(id=discord_id).first():
+            response = {
+                "success": False,
+                "message": "Error: User already registered."
+            }
+        else:
+            new_user = User(id=discord_id, name=username,
+                            email=email, role=role)
+            db.session.add(new_user)
+            db.session.commit()
+            response = {
+                "success": True,
+                "message": "Success: User registered!",
+                "data": {
+                    "id": discord_id,
+                    "name": username,
+                    "email": email,
+                    "role": role
+                }
+            }
+
+    return jsonify(response)
+
 
 if __name__ == '__main__':
     with app.app_context():
