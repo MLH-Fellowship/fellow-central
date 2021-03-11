@@ -4,6 +4,8 @@ import requests
 import os
 from models import db, User, Points, Event
 from dotenv import load_dotenv
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -20,7 +22,8 @@ DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
 DB_NAME = os.getenv('DB_NAME')
 
-app = Flask(__name__)
+FRONTEND_URL = os.environ['FRONTEND_URL']
+SECRET_KEY = os.environ['SECRET_KEY']
 
 db_uri = 'postgresql://{dbuser}:{dbpw}@{dbhost}:{dbport}/{dbname}'.format(
     dbuser=DB_USER,
@@ -30,13 +33,18 @@ db_uri = 'postgresql://{dbuser}:{dbpw}@{dbhost}:{dbport}/{dbname}'.format(
     dbname=DB_NAME
 )
 
+app = Flask(__name__)
+
 app.config.update(
     SQLALCHEMY_DATABASE_URI=db_uri,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    SECRET_KEY='secretkey'
+    SECRET_KEY=SECRET_KEY,
+    JWT_SECRET_KEY=SECRET_KEY
 )
 
 db.init_app(app)
+jwt = JWTManager(app)
+CORS(app)
 
 
 @app.route("/")
@@ -102,10 +110,8 @@ def discord_callback():
             in_fellowship = True
 
     if not in_fellowship:
-        response = {
-            "success": False,
-            "message": "Error: User is not a current MLH fellow!"
-        }
+        message = "Error: User is not a current MLH fellow!"
+        return redirect(f"{FRONTEND_URL}?error=true&msg={message}")
     else:
         role = requests.get(f"https://discord.com/api/v8/guilds/{FELLOWSHIP_GUILD_ID}/members/{session.get('discord_id')}", headers={
             "Authorization": f"Bot {BOT_TOKEN}"
@@ -129,33 +135,16 @@ def discord_callback():
 
         # create and add a new user if doesn't exist
         if User.query.filter_by(id=discord_id).first():
-            response = {
-                "success": True,
-                "message": "Success: User already registered.",
-                "data": {
-                    "id": discord_id,
-                    "name": username,
-                    "email": email,
-                    "role": role
-                }
-            }
+            message = "Success: Logged in!"
         else:
             new_user = User(id=discord_id, name=username,
                             email=email, role=role)
             db.session.add(new_user)
             db.session.commit()
-            response = {
-                "success": True,
-                "message": "Success: User registered!",
-                "data": {
-                    "id": discord_id,
-                    "name": username,
-                    "email": email,
-                    "role": role
-                }
-            }
+            message = "Success: User registered!"
 
-    return jsonify(response)
+    jwt_token = create_access_token(identity=discord_id, expires_delta=False)
+    return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
 
 
 @app.route("/admin/create_event")

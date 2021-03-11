@@ -40,6 +40,9 @@ Backend server of Fellow Central.
     DISCORD_CLIENT_ID=
     DISCORD_CLIENT_SECRET=
     BOT_TOKEN=
+
+    FRONTEND_URL=
+    SECRET_KEY=
     ```
 
 6. Run Flask server locally
