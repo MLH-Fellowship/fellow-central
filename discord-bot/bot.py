@@ -9,4 +9,4 @@ async def on_ready():
 
 
 
-client.run(os.getenv("DISCORD_BOT_TOKEN"))
+client.run(os.environ("DISCORD_BOT_TOKEN"))
