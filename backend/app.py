@@ -38,6 +38,7 @@ app.config.update(
 
 db.init_app(app)
 
+
 @app.route("/")
 def index():
     return f"Hello {session.get('username')}#{session.get('discriminator')} @ {session.get('role')}"
@@ -51,6 +52,7 @@ def discord():
         scope='identify email guilds'
     )
     return redirect(full_redirect_url)
+
 
 @app.route("/discord/callback")
 def discord_callback():
@@ -124,17 +126,18 @@ def discord_callback():
                 role = r["name"]
 
         session["role"] = role
-        
-        # create and add a new user
-        new_user = User(id=discord_id, name=username, email=email, role=role)
-        db.session.add(new_user)
-        db.session.commit()
 
         # create and add a new user if doesn't exist
         if User.query.filter_by(id=discord_id).first():
             response = {
-                "success": False,
-                "message": "Error: User already registered."
+                "success": True,
+                "message": "Success: User already registered.",
+                "data": {
+                    "id": discord_id,
+                    "name": username,
+                    "email": email,
+                    "role": role
+                }
             }
         else:
             new_user = User(id=discord_id, name=username,
