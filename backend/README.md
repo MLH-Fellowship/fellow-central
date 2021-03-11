@@ -36,9 +36,38 @@ Backend server of Fellow Central.
     DB_HOST=
     DB_PORT=
     DB_NAME=
+
+    DISCORD_CLIENT_ID=
+    DISCORD_CLIENT_SECRET=
+    BOT_TOKEN=
+
+    FRONTEND_URL=
+    SECRET_KEY=
     ```
 
 6. Run Flask server locally
     ```bash
     python -m flask run
+    ```
+
+## Accessing the Database
+
+1. Connect to the PostgreSQL DB instance
+    ```bash
+    psql \
+    --host=<endpoint> \
+    --port=<port> \
+    --username=<username> \
+    --password \
+    --dbname=<database-name> 
+    ```
+
+2. Connect to the database
+    ```bash
+    \c <database-name>
+    ```
+
+3. View table
+    ```sql
+    SELECT * from <table-name>;
     ```
