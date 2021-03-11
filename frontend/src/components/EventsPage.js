@@ -8,56 +8,14 @@ import PuffLoader from "react-spinners/PuffLoader";
 import EventCard from './EventCard'
 import PageHeader from './PageHeader'
 import Button from './Button';
+import { connect } from 'react-redux'
+import { setEvents, claimEventPoints } from '../actions'
 
-const mockEvents = [
-  {
-    id: 1,
-    title: 'Time Management Tips for the Fellowship',
-    start: 'Mon, Mar 8  |  8:30pm',
-    link: 'https://google.com',
-    isActive: true
-  },
-  {
-    id: 2,
-    title: 'Event #1',
-    start: 'Mon, Mar 8  |  8:30pm',
-    link: 'https://google.com',
-    isActive: true
-  },
-  {
-    id: 3,
-    title: 'Event #2',
-    start: 'Mon, Mar 8  |  8:30pm',
-    link: 'https://google.com',
-    isActive: true
-  },
-  {
-    id: 4,
-    title: 'Event #3',
-    start: 'Mon, Mar 8  |  8:30pm',
-    vod: 'https://google.com',
-    isActive: false
-  },
-  {
-    id: 5,
-    title: 'Event #4',
-    start: 'Mon, Mar 8  |  8:30pm',
-    vod: 'https://google.com',
-    isActive: false
-  },
-  {
-    id: 6,
-    title: 'Event #5',
-    start: 'Mon, Mar 8  |  8:30pm',
-    vod: 'https://google.com',
-    isActive: false
-  },
-]
-
-const EventsPage = () => {
+const EventsPage = ({ events, ...props }) => {
   const [isModelOpen, setIsModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [secretCodeLoading, setSecretCodeLoading] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
 
   const toggleModal = (isOpen) => {
     setIsModalOpen(isOpen === undefined ? !isModelOpen : isOpen);
@@ -70,7 +28,8 @@ const EventsPage = () => {
 
     // API call
     toggleModal(false);
-    setSecretCodeLoading(false)
+    setSecretCodeLoading(false);
+    props.claimEventPoints(selectedEventId);
   }
 
   return (
@@ -81,10 +40,13 @@ const EventsPage = () => {
         <div>
           <div className="page-subtitle">Active Events</div>
           <div className="LeaderboardPage_ActiveEvents">
-            {mockEvents
+            {events
               .filter(event => event.isActive)
-              .map(({ id, title, start, link, isActive }) =>
-                <EventCard key={id} title={title} start={start} link={link} isActive={isActive} onClaimPointsClick={toggleModal} />
+              .map(({ id, title, start, link, isActive, pointsClaimed }) =>
+                <EventCard key={id} id={id} title={title} start={start} link={link} isActive={isActive} pointsClaimed={pointsClaimed} onClaimPointsClick={() => {
+                  setSelectedEventId(id);
+                  toggleModal();
+                }} />
               )
             }
           </div>
@@ -92,9 +54,11 @@ const EventsPage = () => {
         <div>
           <div className="page-subtitle">Past Events</div>
           <div className="LeaderboardPage_PastEvents">
-            {mockEvents
+            {events
               .filter(event => event.isActive === false)
-              .map(({ id, title, start, vod, isActive }) => <EventCard key={id} title={title} start={start} vod={vod} isActive={isActive} />)
+              .map(({ id, title, start, vod, isActive }) =>
+                <EventCard key={id} id={id} title={title} start={start} vod={vod} isActive={isActive} />
+              )
             }
           </div>
         </div>
@@ -132,4 +96,10 @@ const EventsPage = () => {
   )
 }
 
-export default EventsPage
+const mapStateToProps = (state) => {
+  return {
+    events: state.events
+  }
+}
+
+export default connect(mapStateToProps, { setEvents, claimEventPoints })(EventsPage)
