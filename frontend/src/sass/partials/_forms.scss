@@ -1,7 +1,15 @@
 .form-fields {
   display: grid;
-  gap: 15px;
+  gap: 18px;
   grid-auto-flow: row;
+}
+
+.form-fields-row {
+  display: flex;
+  gap: 18px;
+  grid-auto-flow: row;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .input-group {
@@ -10,15 +18,29 @@
   flex-direction: column;
 
   label {
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 8px;
   }
 
   input {
     padding: 12px 12px;
     border-radius: 10px;
+    outline: none;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color-5);
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  select {
+    padding: 12px 12px;
+    border-radius: 10px;
     border: 1px solid var(--primary-color);
     background-color: var(--primary-color-5);
     outline: none;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-family: 'Work Sans', sans-serif;
   }
 }

@@ -1,5 +1,8 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
+import authReducer from './authReducer'
+import eventsReducer from './eventsReducer'
 
 export default combineReducers({
-  replaceMe: () => 4
-})
+  auth: authReducer,
+  events: eventsReducer
+});

@@ -1,0 +1,41 @@
+.SignupPage {
+  background: repeating-linear-gradient(
+    160deg,
+    var(--primary-color),
+    var(--primary-color) 200px,
+    #225BAC 200px,
+    #225BAC 400px
+  );
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.SignupPageBox {
+  background-color: white;
+  padding: 25px 25px;
+  border-radius: 20px;
+  color: var(--primary-color);
+  min-width: 350px;
+  margin: 40px 0 20px 0;
+}
+
+.SignupPageBox_title {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 35px;
+}
+
+.SignupPageBox_buttons {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 15px;
+}
+
+.SignupPage_LogoutButton {
+  color: white;
+}

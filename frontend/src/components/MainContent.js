@@ -1,13 +1,17 @@
 import React from 'react'
 import '../sass/MainContent.scss'
 import { spring, AnimatedSwitch } from 'react-router-transition';
-import Dashboard from './DashboardPage'
-import Leaderboard from './LeaderboardPage'
-import ClaimPoints from './ClaimPointsPage'
+import DashboardPage from './DashboardPage'
+import EventsPage from './EventsPage'
+import LeaderboardPage from './LeaderboardPage'
+import ClaimPointsPage from './ClaimPointsPage'
+import { connect } from 'react-redux'
 
 import {
   Route,
 } from "react-router-dom";
+import AdminDashboardPage from './AdminDashboardPage';
+import ManageEventsPage from './ManageEventsPage';
 
 // we need to map the `scale` prop we define below
 // to the transform style property
@@ -45,28 +49,62 @@ const bounceTransition = {
   },
 };
 
-const MainContent = () => {
+const MainContent = ({ role }) => {
   return (
     <div className="MainContent">
-      <AnimatedSwitch
-        atEnter={bounceTransition.atEnter}
-        atLeave={bounceTransition.atLeave}
-        atActive={bounceTransition.atActive}
-        mapStyles={mapStyles}
-        className="switch-wrapper"
-      >
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
-        <Route path="/leaderboard">
-          <Leaderboard />
-        </Route>
-        <Route path="/claim-points">
-          <ClaimPoints />
-        </Route>
-      </AnimatedSwitch>
+      {role === 'admin' &&
+        <AnimatedSwitch
+          atEnter={bounceTransition.atEnter}
+          atLeave={bounceTransition.atLeave}
+          atActive={bounceTransition.atActive}
+          mapStyles={mapStyles}
+          className="switch-wrapper"
+        >
+          <Route path="/admin-dashboard">
+            <AdminDashboardPage />
+          </Route>
+          <Route path="/leaderboard">
+            <LeaderboardPage />
+          </Route>
+          <Route path="/manage-events">
+            <ManageEventsPage />
+          </Route>
+          {/* 
+          <Route path="/claim-points">
+            <ClaimPointsPage />
+          </Route> */}
+        </AnimatedSwitch>
+      }
+      {role === 'fellow' &&
+        <AnimatedSwitch
+          atEnter={bounceTransition.atEnter}
+          atLeave={bounceTransition.atLeave}
+          atActive={bounceTransition.atActive}
+          mapStyles={mapStyles}
+          className="switch-wrapper"
+        >
+          <Route path="/dashboard">
+            <DashboardPage />
+          </Route>
+          <Route path="/leaderboard">
+            <LeaderboardPage />
+          </Route>
+          <Route path="/events">
+            <EventsPage />
+          </Route>
+          <Route path="/claim-points">
+            <ClaimPointsPage />
+          </Route>
+        </AnimatedSwitch>
+      }
     </div>
   )
 }
 
-export default MainContent
+const mapStateToProps = (state) => {
+  return {
+    role: state.auth.user?.role
+  }
+}
+
+export default connect(mapStateToProps, {})(MainContent)
