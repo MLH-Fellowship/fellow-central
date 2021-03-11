@@ -1,10 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
-from sqlalchemy.ext.declarative import declarative_base
 
 db = SQLAlchemy()
-
-Base = declarative_base()
 
 class User(db.Model):
     """ Individual user (admin or fellow)"""
