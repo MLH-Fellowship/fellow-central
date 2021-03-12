@@ -1,4 +1,4 @@
-from flask import Flask, redirect, sessions, request, jsonify, session
+from flask import Flask, redirect, sessions, request, jsonify, session, abort
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import os
@@ -147,18 +147,19 @@ def discord_callback():
     return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
 
 
-@app.route("/admin/create_event")
+@app.route("/admin/create_event", methods = ["POST"])
 def create_event():
+    print (request.method)
     if request.method == 'POST':
         # enter the values provided by the form
         event_name = request.form['name']
-        start_time_f = request.form['start_time_f']
-        end_time_f = request.form['end_time_f']
-        link = request.form['link']
+        start_time_f = request.form['start_time']
+        end_time_f = request.form['end_time']
+        link = request.form['event_link']
         secret_code_f = request.form['secret_code']
-        points = request.form['points']
+        points = request.form['points_amount']
 
-        new_event = Event(name=event_name, start_time=start_time,
+        new_event = Event(name=event_name, start_time=start_time_f,
                           end_time=end_time_f,
                           points_amount=points,
                           secret_code=secret_code_f,
@@ -167,9 +168,10 @@ def create_event():
         db.session.add(new_event)
         db.session.commit()
 
-        return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
+        return f"Entry successfully posted."
 
     else:
+        print("What")
         abort(405)
 
 if __name__ == '__main__':
