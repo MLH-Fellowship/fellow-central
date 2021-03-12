@@ -142,7 +142,7 @@ def discord_callback():
         if User.query.filter_by(id=discord_id).first():
             message = "Success: Logged in!"
         else:
-            new_user = User(id=discord_id, name=username,
+            new_user = User(id=discord_id, name=screen_name,
                             email=email, role=role)
             db.session.add(new_user)
             db.session.commit()
@@ -164,40 +164,59 @@ def add_points():
     description = data['description']
     event_id = None
 
+    discord_id = User.query.filter_by(name=assignee).first().id
+
     if description == 'Event':
-        event_id = data['event_id']
-        # Check if points claimed for event already
-        if Points.query.filter_by(event_id=event_id, assignee=assignee).first():
-            message = 'Event points already claimed.'
-            success = False
+        event_id = data.get('event_id')
+        secret_input = data.get('secret_input')
+        if event_id is None:
             return jsonify({
-                "success": success,
-                "message": message
+                "success": False,
+                "message": 'Please specify the event id'
+            })
+        if secret_input is None:
+            return jsonify({
+                "success": False,
+                "message": 'Please input the secret code'
+            })
+
+        # Check if points are already claimed for event
+        if Points.query.filter_by(event_id=event_id, assignee=discord_id).first():
+            return jsonify({
+                "success": False,
+                "message": 'Event points already claimed'
             })
         else:
-            message = f'Points added for Event {event_id}'
-            success = True
+            # Check if input matches event secret code
+            event = Event.query.filter_by(id=event_id).first()
+            if event.secret_code == secret_input:
+                amount = event.points_amount
+                message = f'{amount} points added to {assignee} for Event {event.name}'
+                success = True
+            else:
+                return jsonify({
+                    "success": False,
+                    "message": f'The code {secret_input} is incorrect for Event {event.name}'
+                })
 
     elif description == 'Discord':
         # Check daily limit of 5 messages is exceeded
-        discord_points_today = Points.query.filter_by(description='Discord', assignee=assignee) \
+        discord_points_today = Points.query.filter_by(description='Discord', assignee=discord_id) \
             .filter(func.date(Points.timestamp) == func.date(func.now())).all()
         if len(discord_points_today) >= 5:
-            message = 'Daily limit reached.'
-            success = False
             return jsonify({
-                "success": success,
-                "message": message
+                "success": False,
+                "message": 'Daily limit for Discord activity points reached'
             })
         else:
-            message = 'Points added for Discord activity'
+            message = f'{amount } points added to {assignee} for Discord activity'
             success = True
     else:
-        message = f'Points added for {description}'
+        message = f'{amount} points added to {assignee} for {description}'
         success = True
 
     # Create a Points in the points table
-    new_point = Points(amount=amount, assignee=assignee,
+    new_point = Points(amount=amount, assignee=discord_id,
                        description=description, event_id=event_id)
     db.session.add(new_point)
     db.session.commit()

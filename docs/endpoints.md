@@ -22,6 +22,7 @@ Content-Type: application/json
 - _assignee_ : the discord_id of the user to assign points to
 - _description_ : string to describe why points were allocated ("Discord" for discord activity, "Event" for event attendance, otherwise custom)
 - _event_id_ (optional): the id of the event (if description is "Event")
+- _secret_input_ (optional): the user's input for event secret code (if description is "Event")
 
 ### Output
 
@@ -37,7 +38,7 @@ Example successful output
         "assignee": "123456789",
         "description": "Discord",
         "event_id": null,
-        "timestamp": 2021-03-12 02:09:48.698096+00
+        "timestamp": "2021-03-12 02:09:48.698096+00"
     }
 }
 ```
