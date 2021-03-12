@@ -177,10 +177,12 @@ def create_event():
         message = "Event successfully created."
         success = True
 
+        event_id = new_event.id
+
         return jsonify({
             "success": success,
             "message": message,
-            "id": new_event.id
+            "id": event_id
         })
     except:
         message = "Server Error. Could not commit to database"
