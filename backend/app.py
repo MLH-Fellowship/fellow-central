@@ -149,30 +149,47 @@ def discord_callback():
 
 @app.route("/admin/create_event", methods = ["POST"])
 def create_event():
-    print (request.method)
-    if request.method == 'POST':
-        # enter the values provided by the form
-        event_name = request.form['name']
-        start_time_f = request.form['start_time']
-        end_time_f = request.form['end_time']
-        link = request.form['event_link']
-        secret_code_f = request.form['secret_code']
-        points = request.form['points_amount']
+    """Create an event.
 
-        new_event = Event(name=event_name, start_time=start_time_f,
-                          end_time=end_time_f,
-                          points_amount=points,
-                          secret_code=secret_code_f,
-                          event_link=link)
+    Returns:
+        Status request: The id of the object created.
+    """
+    data = request.form
 
+    event_name = data['name']
+    start_time_f = data['start_time']
+    end_time_f = data['end_time']
+    link = data['event_link']
+    secret_code_f = data['secret_code']
+    points = data['points_amount']
+    event_id = None
+
+    new_event = Event(name=event_name, start_time=start_time_f,
+                        end_time=end_time_f,
+                        points_amount=points,
+                        secret_code=secret_code_f,
+                        event_link=link)
+
+    try:
         db.session.add(new_event)
         db.session.commit()
 
-        return f"{new_event.id}"
+        message = "Event successfully created."
+        success = True
 
-    else:
-        print("What")
-        abort(405)
+        return jsonify({
+            "success": success,
+            "message": message,
+            "id": new_event.id
+        })
+    except:
+        message = "Server Error. Could not commit to database"
+        success = False
+
+        return jsonify({
+            "success": success,
+            "message": message
+        })
 
 if __name__ == '__main__':
     with app.app_context():
