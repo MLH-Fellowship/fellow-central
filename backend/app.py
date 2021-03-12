@@ -168,7 +168,7 @@ def create_event():
         db.session.add(new_event)
         db.session.commit()
 
-        return f"Entry successfully posted."
+        return f"{new_event.id}"
 
     else:
         print("What")
