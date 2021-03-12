@@ -93,11 +93,15 @@ def discord_callback():
     discriminator = data.json()["discriminator"]
     discord_id = data.json()["id"]
     username = data.json()["username"]
+    screen_name = str(username) + "#" + str(discriminator)
+    avatar = data.json()["avatar"]
 
     session["discord_id"] = discord_id
     session["username"] = username
     session["email"] = email
     session["discriminator"] = discriminator
+    session["screen_name"] = screen_name
+    session["avatar"] = avatar
 
     # get all the guilds that user's in
     guilds = requests.get("https://discord.com/api/v8/users/@me/guilds", headers={
