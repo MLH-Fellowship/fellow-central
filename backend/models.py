@@ -19,7 +19,6 @@ class User(db.Model):
         self.name = name
         self.email = email
         self.role = role
-        self.points_total = 0
 
 
 class Points(db.Model):
