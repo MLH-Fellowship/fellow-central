@@ -146,6 +146,9 @@ def discord_callback():
     jwt_token = create_access_token(identity=discord_id, expires_delta=False)
     return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
 
+@app.route("/view/all_pod_points")
+def view_all_pod_points:
+    
 
 if __name__ == '__main__':
     with app.app_context():
