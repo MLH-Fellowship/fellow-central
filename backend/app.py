@@ -277,7 +277,63 @@ def create_event():
         return jsonify({"success": success, "message": message})
 
 
-if __name__ == "__main__":
+@app.route("/points/add", methods=['POST'])
+def add_points():
+    """
+    Add points
+    """
+    data = request.json
+
+    amount = data['amount']
+    assignee = data['assignee']
+    description = data['description']
+    event_id = None
+
+    if description == 'Event':
+        event_id = data['event_id']
+        # Check if points claimed for event already
+        if Points.query.filter_by(event_id=event_id, assignee=assignee).first():
+            message = 'Event points already claimed.'
+            success = False
+            return jsonify({
+                "success": success,
+                "message": message
+            })
+        else:
+            message = f'Points added for Event {event_id}'
+            success = True
+
+    elif description == 'Discord':
+        # Check daily limit of 5 messages is exceeded
+        discord_points_today = Points.query.filter_by(description='Discord', assignee=assignee) \
+            .filter(func.date(Points.timestamp) == func.date(func.now())).all()
+        if len(discord_points_today) >= 5:
+            message = 'Daily limit reached.'
+            success = False
+            return jsonify({
+                "success": success,
+                "message": message
+            })
+        else:
+            message = 'Points added for Discord activity'
+            success = True
+    else:
+        message = f'Points added for {description}'
+        success = True
+
+    # Create a Points in the points table
+    new_point = Points(amount=amount, assignee=assignee,
+                       description=description, event_id=event_id)
+    db.session.add(new_point)
+    db.session.commit()
+
+    return jsonify({
+        "success": success,
+        "message": message
+    })
+
+
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run()
