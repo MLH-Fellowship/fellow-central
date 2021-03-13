@@ -92,3 +92,46 @@ Example unsuccessful output
 ```
 
 ---
+
+## **GET** `/get_events`
+
+### Input
+
+```HTTP
+GET /get_events HTTP/1.1
+Host: 127.0.0.1:5000
+Authorization: Bearer xxxx.yyyy.zzzz
+```
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Events fetched successfully",
+    "data": [
+        {
+            "name": "Test",
+            "points_amount": 10,
+            "secret_code": "SecretCode",
+            "start_time": "Sat, 06 Mar 2021 19:44:00 GMT",
+            "end_time": "Sat, 06 Mar 2021 19:44:00 GMT",
+            "event_link": "https://twitch.tv/MLH/329920034",
+            "vid_link": null
+        }
+    ]
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: ERROR_MESSAGE"
+}
+```
+
+---
