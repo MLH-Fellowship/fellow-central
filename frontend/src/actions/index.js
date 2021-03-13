@@ -5,8 +5,12 @@ import {
 
   SET_EVENTS,
   CLAIM_EVENT_POINTS,
+
+  SET_POINTS,
+  CREATE_POINT,
 } from './types'
 
+// Auth
 export const signIn = ({ user, token }) => {
   return {
     type: SIGN_IN,
@@ -27,6 +31,7 @@ export const updateProfile = (user) => {
   }
 }
 
+// Events
 export const setEvents = (events) => {
   return {
     type: SET_EVENTS,
@@ -38,5 +43,20 @@ export const claimEventPoints = (id) => {
   return {
     type: CLAIM_EVENT_POINTS,
     payload: id
+  }
+}
+
+// Points
+export const setPoints = (points) => {
+  return {
+    type: SET_POINTS,
+    payload: points
+  }
+}
+
+export const createPoint = (point) => {
+  return {
+    type: CREATE_POINT,
+    payload: point
   }
 }

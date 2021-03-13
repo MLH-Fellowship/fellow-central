@@ -3,8 +3,11 @@ import '../sass/ManageEventsPage.scss'
 import PageHeader from './PageHeader'
 import InfoCard from './InfoCard'
 import Button from './Button'
+import { connect } from 'react-redux'
+import axios from 'axios'
+import { toast } from 'react-toastify';
 
-const ManageEventsPage = () => {
+const ManageEventsPage = ({ auth, events, ...props }) => {
   const [name, setName] = useState('');
   const [starts, setStarts] = useState('');
   const [ends, setEnds] = useState('');
@@ -12,19 +15,44 @@ const ManageEventsPage = () => {
   const [secretCode, setSecretCode] = useState('');
   const [points, setPoints] = useState('');
 
-  const handleSubmit = (event) => {
-    alert(`
-      Name: ${ends}
-    `)
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Call API
-    setName('')
-    setStarts('')
-    setEnds('')
-    setLink('')
-    setSecretCode('')
-    setPoints('')
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/create_event`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`,
+        },
+        data: {
+          name: name,
+          start_time: starts,
+          end_time: ends,
+          secret_code: secretCode,
+          points_amount: points,
+          event_link: link,
+        }
+      });
+      props.createPoint({
+        id: response.data.id,
+        name: name,
+        start_time: starts,
+        end_time: ends,
+        secret_code: secretCode,
+        points_amount: points,
+        event_link: link,
+      });
+      toast(`🔵 Event created`)
+      
+      setName('')
+      setStarts('')
+      setEnds('')
+      setLink('')
+      setSecretCode('')
+      setPoints('')
+    } catch(e) {
+      toast.error(`🔴 Something went wrong`)
+    }
   }
 
   return (
@@ -57,18 +85,42 @@ const ManageEventsPage = () => {
               </div>
               <div className="input-group">
                 <label>Points</label>
-                <input type="number" min="0" value={points} onChange={e => setPoints(e.target.value)} style={{ width: '270px' }} required />
+                <input type="number" min="0" value={points} onChange={e => setPoints(e.target.value)} style={{ width: '150px' }} required />
               </div>
             </div>
             <Button text="Add" type="submit" style={{ marginTop: '25px' }} />
           </form>
         </InfoCard>
         <InfoCard title="Events">
-          Content
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Starts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {events && events.map(event => 
+                  <tr key={event.id}>
+                    <td>{event.title}</td>
+                    <td>{event.start}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </InfoCard>
       </div>
     </div>
   )
 }
 
-export default ManageEventsPage
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth,
+    events: state.events
+  }
+}
+
+export default connect(mapStateToProps, {})(ManageEventsPage)

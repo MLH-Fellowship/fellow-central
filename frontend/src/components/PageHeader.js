@@ -4,10 +4,14 @@ import { Icon } from '@iconify/react';
 import logoutLine from '@iconify-icons/majesticons/logout-line';
 import { connect } from 'react-redux'
 import { signOut } from '../actions'
+import { useHistory } from 'react-router-dom';
 
 const PageHeader = ({ title, children, ...props }) => {
+  const history = useHistory()
+
   const handleSignout = () => {
     props.signOut();
+    history.push("/");
   }
 
   return (

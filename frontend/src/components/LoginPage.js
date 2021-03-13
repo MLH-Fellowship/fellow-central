@@ -1,24 +1,58 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import '../sass/LoginPage.scss'
 import LoginButton from './LoginButton'
 import { InlineIcon } from '@iconify/react';
 import bxlDiscord from '@iconify-icons/bx/bxl-discord';
 import { connect } from 'react-redux'
 import { signIn } from '../actions'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import queryString from 'query-string'
 
 const LoginPage = (props) => {
-  const handleLogin = () => {
-    // Call API
-    props.signIn({
-      token: '123abc',
-      user: {
-        discordId: 'PawanKolhe#7887',
-        email: 'contact@pawankolhe.com',
-        role: 'admin',
-        pod: '2.0.0',
-        name: 'Pawan Kolhe'
+  const location = useLocation();
+
+  useEffect(() => {
+    const value = queryString.parse(location.search);
+    const jwtToken = value.token || null;
+
+    const fetchUserInfo = async () => {
+      try{
+        // API Call
+        const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/user`, {
+          headers: {
+            "Authorization": `Bearer ${jwtToken}`,
+          },
+        });
+        props.signIn({
+          token: jwtToken,
+          user: response.data.data
+        });
+
+        // Test
+        // props.signIn({
+        //   token: jwtToken,
+        //   user: {
+        //     discordId: 'pawankolhe#7887',
+        //     email: 'contact@pawankolhe.com',
+        //     role: 'admin',
+        //     pod: '2.0.0',
+        //     name: 'Pawan Kolhe'
+        //   }
+        // });
+      } catch(e) {
+        console.error(e);
       }
-    });
+    }
+
+    if(jwtToken) {
+      fetchUserInfo()
+    }
+  }, [location, props]);
+
+  const handleLogin = async () => {
+    // Redirect to Discord OAuth
+    window.location.href = `${process.env.REACT_APP_API_ENDPOINT}/discord`;
   }
 
   return (

@@ -8,9 +8,10 @@ import { connect } from 'react-redux'
 import NavSidebar from './NavSidebar';
 import MainContent from './MainContent';
 import LoginPage from './LoginPage';
+import { ToastContainer } from 'react-toastify';
 // import SignupPage from './SignupPage';
 
-function App({ isSignedIn = false, showSignup = true, role }) {
+function App({ isSignedIn = false, role }) {
   return (
     <Router>
       <div className="App">
@@ -50,9 +51,20 @@ function App({ isSignedIn = false, showSignup = true, role }) {
           :
           <>
             <LoginPage />
-            <Redirect to="/" />
+            {/* <Redirect to="/" /> */}
           </>
         }
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </Router>
   );
