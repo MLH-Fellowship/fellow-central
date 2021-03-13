@@ -53,3 +53,42 @@ Example unsuccessful output
 ```
 
 ---
+
+## **GET** `/get_user`
+
+### Input
+
+```HTTP
+GET /get_user HTTP/1.1
+Host: 127.0.0.1:5000
+Authorization: Bearer xxxx.yyyy.zzzz
+```
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "User found",
+    "data": {
+        "email": "test@email.com",
+        "id": "123456",
+        "name": "test#1234",
+        "points_total": 10,
+        "role": "admin"
+    }
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "User not found"
+}
+```
+
+---

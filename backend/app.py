@@ -299,6 +299,29 @@ def create_event():
         return jsonify({"success": success, "message": message})
 
 
+@app.route("/get_user")
+@jwt_required()
+def get_user():
+    discord_id = get_jwt_identity()
+    user = User.query.filter_by(id=discord_id).first()
+    if user is None:
+        return {
+            "success": False,
+            "message": "User not found"
+        }
+    else:
+        return jsonify({
+            "success": True,
+            "message": "User found",
+            "data": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "role": user.role,
+                "points_total": user.points_total
+            }
+        })
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
