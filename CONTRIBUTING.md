@@ -4,7 +4,25 @@ Whether it's a bug report, new feature, correction, or additional documentation,
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
-## Pull Request Process
+- [Getting Started](#getting-started)  
+- [Pull Requests](#pull-requests)  
+- [Commits](#commits)  
+- [Licensing](#licensing)  
+
+
+## Getting Started
+
+This project contains a frontend, backend, and a discord bot. To get your development environment setup, read the `README.md` file of the corresponding project:
+
+Get Started with:
+- [Frontend](https://github.com/MLH-Fellowship/fellow-central/tree/main/frontend)
+- [Backend](https://github.com/MLH-Fellowship/fellow-central/tree/main/backend)
+- [Discord Bot](https://github.com/MLH-Fellowship/fellow-central/blob/main/discord-bot)
+
+REST API Docs:
+- [API](https://github.com/MLH-Fellowship/fellow-central/tree/main/docs)
+
+## Pull Requests
 
 Pull requests are welcome!
 
