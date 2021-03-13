@@ -243,7 +243,15 @@ def add_points():
 
     return jsonify({
         "success": success,
-        "message": message
+        "message": message,
+        "data": {
+            "id": new_point.id,
+            "amount": new_point.amount,
+            "assignee": new_point.assignee,
+            "description": new_point.description,
+            "event_id": new_point.event_id,
+            "timestamp": new_point.timestamp
+        }
     })
 
 
