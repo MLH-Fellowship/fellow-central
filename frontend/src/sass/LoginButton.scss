@@ -12,9 +12,15 @@
   font-family: 'Work Sans', sans-serif;
   outline: none;
   border: none;
+  justify-content: center;
 
   &:hover {
     opacity: 0.95;
+  }
+
+  &.loading {
+    text-align: center;
+    pointer-events: none;
   }
 }
 

@@ -5,6 +5,7 @@ import bxsDashboard from '@iconify-icons/bx/bxs-dashboard';
 import bxCalendarEvent from '@iconify-icons/bx/bx-calendar-event';
 import bxsTrophy from '@iconify-icons/bx/bxs-trophy';
 import conditionWaitPoint from '@iconify-icons/carbon/condition-wait-point';
+import bxsHelpCircle from '@iconify-icons/bx/bxs-help-circle';
 import { NavLink } from "react-router-dom";
 import { connect } from 'react-redux'
 
@@ -76,6 +77,15 @@ const Nav = ({ role }) => {
                 <Icon icon={bxCalendarEvent} />
               </div>
               <div className="Nav_link_text">Events</div>
+            </div>
+          </NavLink>
+
+          <NavLink to="help" style={{ textDecoration: 'none' }} activeClassName="Nav-link-selected">
+            <div className="Nav_link">
+              <div className="Nav_link_icon">
+                <Icon icon={bxsHelpCircle} />
+              </div>
+              <div className="Nav_link_text">Help</div>
             </div>
           </NavLink>
 
