@@ -5,7 +5,7 @@ import HighlightCard from './HighlightCard'
 import InfoCard from './InfoCard'
 import Button from './Button'
 import { InlineIcon } from '@iconify/react'
-import conditionWaitPoint from '@iconify-icons/carbon/condition-wait-point'
+import bxCalendarEvent from '@iconify-icons/bx/bx-calendar-event';
 import axios from 'axios'
 import { connect } from 'react-redux'
 
@@ -69,7 +69,7 @@ const DashboardPage = ({ auth, ...props }) => {
   return (
     <div className="DashboardPage">
       <PageHeader title="Dashboard">
-        <Button text="Claim Points" icon={<InlineIcon icon={conditionWaitPoint} />} to="claim-points" />
+        <Button text="Events" icon={<InlineIcon icon={bxCalendarEvent} />} to="events" />
       </PageHeader>
 
       <div className="page-content-container">

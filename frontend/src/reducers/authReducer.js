@@ -9,6 +9,11 @@ const INITIAL_STATE = {
 export default function authReducer (state = INITIAL_STATE, action) {
   switch(action.type) {
     case SIGN_IN:
+      if(action.payload.user.role.startsWith("Pod")) {
+        const pod = action.payload.user.role;
+        action.payload.user.role = 'fellow'
+        action.payload.user.pod = pod;
+      }
       sessionStorage.setItem('token', action.payload.token)
       sessionStorage.setItem('user', JSON.stringify(action.payload.user))
       return { ...state, isSignedIn: true, user: action.payload.user, token: action.payload.token }
