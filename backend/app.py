@@ -322,6 +322,39 @@ def get_user():
             }
         })
 
+
+@app.route("/get_top_fellows")
+def get_top_fellows():
+
+    try:
+        n = request.args.get('n') or 10  # Default 10
+
+        top_fellows = User.query.filter(User.role != 'admin').order_by(
+            User.points_total.desc()).limit(n).all()
+
+        top_fellows_data = []
+
+        for fellow in top_fellows:
+            fellow_data = {
+                "name": fellow.name,
+                "points_total": fellow.points_total
+            }
+
+            top_fellows_data.append(fellow_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Top fellows fetched successfully",
+            "data": top_fellows_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

@@ -92,3 +92,47 @@ Example unsuccessful output
 ```
 
 ---
+
+## **GET** `/get_top_fellows`
+
+### Input
+
+```HTTP
+GET /get_top_fellows?n=2 HTTP/1.1
+Host: 127.0.0.1:5000
+```
+
+### Param Attributes:
+- - _n_ : number of fellows to fetch
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Top fellows fetched successfully",
+    "data": [
+        {
+            "name": "test#1234",
+            "points_total": 17
+        },
+        {
+            "name": "test2#5678",
+            "points_total": 13
+        }
+    ]
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
