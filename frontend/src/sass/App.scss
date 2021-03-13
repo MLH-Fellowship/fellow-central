@@ -62,3 +62,23 @@
 .ReactModal__Overlay--before-close{
   opacity: 0;
 }
+
+/* Table */
+.table-container {
+  overflow-y: auto;
+}
+
+.table {
+  th {
+    border-bottom: 1px solid var(--primary-color);
+    padding: 10px;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  td {
+    padding: 10px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+}

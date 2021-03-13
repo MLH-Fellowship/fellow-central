@@ -18,6 +18,11 @@ Frontend web app of Fellow Central.
     npm install
     ```
 
+3. Create a `.env` file with the following keys:
+    ```
+    REACT_APP_API_ENDPOINT=
+    ```
+
 3. Start dev server:
     ```bash
     npm run start

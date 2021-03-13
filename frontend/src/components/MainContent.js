@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import AdminDashboardPage from './AdminDashboardPage';
 import ManageEventsPage from './ManageEventsPage';
+import SendPointsPage from './SendPointsPage';
 
 // we need to map the `scale` prop we define below
 // to the transform style property
@@ -66,13 +67,13 @@ const MainContent = ({ role }) => {
           <Route path="/leaderboard">
             <LeaderboardPage />
           </Route>
+          <Route path="/send-points">
+            <SendPointsPage />
+          </Route>
           <Route path="/manage-events">
             <ManageEventsPage />
           </Route>
-          {/* 
-          <Route path="/claim-points">
-            <ClaimPointsPage />
-          </Route> */}
+
         </AnimatedSwitch>
       }
       {role === 'fellow' &&

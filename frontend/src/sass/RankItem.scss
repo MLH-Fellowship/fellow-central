@@ -1,0 +1,80 @@
+
+.rank-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: var(--primary-color-5);
+  border-radius: 10px;
+
+  &.blue {
+    background-color: var(--primary-color-5);
+
+    .rank-position {
+      background-color: var(--primary-color);
+    }
+    .rank-points, .rank-username {
+      color: var(--primary-color);
+    }
+  }
+  &.red {
+    background-color: var(--red-color-5);
+
+    .rank-position {
+      background-color: var(--red-color);
+    }
+    .rank-points, .rank-username {
+      color: var(--red-color);
+    }
+  }
+  &.yellow {
+    background-color: var(--yellow-color-5);
+
+    .rank-position {
+      background-color: var(--yellow-color);
+    }
+    .rank-points, .rank-username {
+      color: var(--yellow-color);
+    }
+  }
+}
+
+.rank-left {
+  display: flex;
+  flex-direction: row;
+}
+
+.rank-right {
+  display: flex;
+  flex-direction: row;
+}
+
+.rank-position {
+  color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.rank-username {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.rank-points {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}

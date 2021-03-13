@@ -10,26 +10,46 @@ import PageHeader from './PageHeader'
 import Button from './Button';
 import { connect } from 'react-redux'
 import { setEvents, claimEventPoints } from '../actions'
+import axios from 'axios'
+import { toast } from 'react-toastify';
 
-const EventsPage = ({ events, ...props }) => {
+const EventsPage = ({ auth, events, ...props }) => {
   const [isModelOpen, setIsModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [secretCodeLoading, setSecretCodeLoading] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState('');
 
   const toggleModal = (isOpen) => {
     setIsModalOpen(isOpen === undefined ? !isModelOpen : isOpen);
     setSecretCode('');
   }
 
-  const handleSecretCodeSubmit = (event) => {
+  const handleSecretCodeSubmit = async (event) => {
     event.preventDefault();
     setSecretCodeLoading(true)
 
-    // API call
-    toggleModal(false);
-    setSecretCodeLoading(false);
-    props.claimEventPoints(selectedEventId);
+    // Call API
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/events/claim-points`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`,
+        },
+        data: {
+          event_id: selectedEventId,
+          secret_code: secretCode,
+        }
+      });
+      props.createPoint(response.data.data);
+      toast(`🔵 Points added`)
+      
+      toggleModal(false);
+      setSecretCodeLoading(false);
+      props.claimEventPoints(selectedEventId);
+      setSelectedEventId('')
+      setSecretCode('')
+    } catch(e) {
+      toast.error(`🔴 Something went wrong`)
+    }
   }
 
   return (
@@ -98,6 +118,7 @@ const EventsPage = ({ events, ...props }) => {
 
 const mapStateToProps = (state) => {
   return {
+    auth: state.auth,
     events: state.events
   }
 }
