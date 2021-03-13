@@ -12,12 +12,14 @@ class User(db.Model):
     name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), unique=True, nullable=False)
     role = db.Column(db.String(), nullable=False)
+    points_total = db.Column(db.Integer(), nullable=False)
 
     def __init__(self, id, name, email, role):
         self.id = id
         self.name = name
         self.email = email
         self.role = role
+        self.points_total = 0
 
 
 class Points(db.Model):
