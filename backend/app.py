@@ -310,17 +310,42 @@ def get_user():
             "message": "User not found"
         }
     else:
-        return jsonify({
-            "success": True,
-            "message": "User found",
-            "data": {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "role": user.role,
-                "points_total": user.points_total
-            }
-        })
+        # check if this is a fellow inquiring about their point total,
+        # or if this is an admin inquiring about a fellow's total.
+        if user.role == "Pod 0.0.1": # TODO: Change this to admin after testing is over.
+            # get the specified info for admin
+            u_discord_id = request.args.get('discord_id')
+            u_user = User.query.filter_by(id=u_discord_id).first()
+            if u_user is None:
+                return {
+                    "success": False,
+                    "message": "The requested fellow was not found."
+                }
+            else:
+                return jsonify({
+                    "success": True,
+                    "message": "User found",
+                    "data": {
+                        "id": u_user.id,
+                        "name": u_user.name,
+                        "email": u_user.email,
+                        "role": u_user.role,
+                        "points_total": u_user.points_total
+                    }
+                })
+        else:
+            return jsonify({
+                "success": True,
+                "message": "User found",
+                "data": {
+                    "id": user.id,
+                    "name": user.name,
+                    "email": user.email,
+                    "role": user.role,
+                    "points_total": user.points_total
+                }
+            })
+
 
 if __name__ == '__main__':
     with app.app_context():
