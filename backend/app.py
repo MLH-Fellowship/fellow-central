@@ -1,5 +1,6 @@
 from flask import Flask, redirect, sessions, request, jsonify, session, abort
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 import requests
 import os
 from models import db, User, Points, Event
@@ -89,7 +90,8 @@ def discord_callback():
     # Get user's information
     data = requests.get(
         "https://discord.com/api/v8/users/@me",
-        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={
+            "Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     email = data.json()["email"]
@@ -109,7 +111,8 @@ def discord_callback():
     # get all the guilds that user's in
     guilds = requests.get(
         "https://discord.com/api/v8/users/@me/guilds",
-        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={
+            "Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     # check if the user is in the fellowship guide
@@ -148,13 +151,108 @@ def discord_callback():
         if User.query.filter_by(id=discord_id).first():
             message = "Success: Logged in!"
         else:
-            new_user = User(id=discord_id, name=username, email=email, role=role)
+            new_user = User(id=discord_id, name=screen_name,
+                            email=email, role=role)
             db.session.add(new_user)
             db.session.commit()
             message = "Success: User registered!"
 
     jwt_token = create_access_token(identity=discord_id, expires_delta=False)
     return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
+
+
+@app.route("/admin/add_points", methods=['POST'])
+def add_points():
+    """
+    Add points
+    """
+    data = request.json
+
+    amount = data['amount']
+    assignee = data['assignee']
+    description = data['description']
+    event_id = None
+
+    # if user's discord id is given, change assignee to discord username
+    if "#" in assignee:
+        user = User.query.filter_by(name=assignee).first()
+    else:
+        user = User.query.filter_by(id=assignee).first()
+        assignee = user.name
+
+    discord_id = user.id
+
+    if description == 'Event':
+        event_id = data.get('event_id')
+        secret_input = data.get('secret_input')
+        if event_id is None:
+            return jsonify({
+                "success": False,
+                "message": 'Please specify the event id'
+            })
+        if secret_input is None:
+            return jsonify({
+                "success": False,
+                "message": 'Please input the secret code'
+            })
+
+        # Check if points are already claimed for event
+        if Points.query.filter_by(event_id=event_id, assignee=discord_id).first():
+            return jsonify({
+                "success": False,
+                "message": 'Event points already claimed'
+            })
+        else:
+            # Check if input matches event secret code
+            event = Event.query.filter_by(id=event_id).first()
+            if event.secret_code == secret_input:
+                amount = event.points_amount
+                message = f'{amount} points added to {assignee} for Event {event.name}'
+                success = True
+            else:
+                return jsonify({
+                    "success": False,
+                    "message": f'The code {secret_input} is incorrect for Event {event.name}'
+                })
+
+    elif description == 'Discord':
+        # Check daily limit of 5 messages is exceeded
+        discord_points_today = Points.query.filter_by(description='Discord', assignee=discord_id) \
+            .filter(func.date(Points.timestamp) == func.date(func.now())).all()
+        if len(discord_points_today) >= 5:
+            return jsonify({
+                "success": False,
+                "message": 'Daily limit for Discord activity points reached'
+            })
+        else:
+            message = f'{amount } points added to {assignee} for Discord activity'
+            success = True
+    else:
+        message = f'{amount} points added to {assignee} for {description}'
+        success = True
+
+    # Create a Points in the points table
+    new_point = Points(amount=amount, assignee=discord_id,
+                       description=description, event_id=event_id)
+    db.session.add(new_point)
+
+    # Add to user's total points
+    user.points_total += amount
+
+    db.session.commit()
+
+    return jsonify({
+        "success": success,
+        "message": message,
+        "data": {
+            "id": new_point.id,
+            "amount": new_point.amount,
+            "assignee": new_point.assignee,
+            "description": new_point.description,
+            "event_id": new_point.event_id,
+            "timestamp": new_point.timestamp
+        }
+    })
 
 
 @app.route("/admin/create_event", methods=["POST"])
@@ -201,7 +299,7 @@ def create_event():
         return jsonify({"success": success, "message": message})
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run()

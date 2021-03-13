@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     """ Individual user (admin or fellow)"""
     __tablename__ = 'users'
@@ -11,7 +12,7 @@ class User(db.Model):
     name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), unique=True, nullable=False)
     role = db.Column(db.String(), nullable=False)
-    points_total = db.Column(db.Integer())
+    points_total = db.Column(db.Integer(), nullable=False)
 
     def __init__(self, id, name, email, role):
         self.id = id
@@ -27,8 +28,10 @@ class Points(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     amount = db.Column(db.Integer(), nullable=False)
-    assignee = db.Column(db.String(), db.ForeignKey('users.id'), nullable=False)
-    timestamp = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    assignee = db.Column(db.String(), db.ForeignKey(
+        'users.id'), nullable=False)
+    timestamp = db.Column(db.DateTime(), nullable=False,
+                          server_default=func.now())
     description = db.Column(db.String(), nullable=False)
     event_id = db.Column(db.Integer(), db.ForeignKey('events.id'))
 
@@ -50,7 +53,7 @@ class Event(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     start_time = db.Column(db.DateTime(), nullable=False)
-    end_time =  db.Column(db.DateTime(), nullable=False)
+    end_time = db.Column(db.DateTime(), nullable=False)
     secret_code = db.Column(db.String(), nullable=False)
     points_amount = db.Column(db.Integer(), nullable=False)
     event_link = db.Column(db.String(), nullable=False)
