@@ -30,17 +30,17 @@ const EventsPage = ({ auth, events, ...props }) => {
 
     // Call API
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/events/claim-points`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/add_points`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
         data: {
           event_id: selectedEventId,
-          secret_code: secretCode,
+          secret_input: secretCode,
+          description: 'Event',
         }
       });
-      props.createPoint(response.data.data);
-      toast(`🔵 Points added`)
+      toast(`🔵 ${response.data.message}`)
       
       toggleModal(false);
       setSecretCodeLoading(false);

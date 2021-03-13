@@ -17,7 +17,7 @@ const SendPointsPage = ({ auth, ...props }) => {
 
     // Call API
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/points/add`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/add_points`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
@@ -45,9 +45,9 @@ const SendPointsPage = ({ auth, ...props }) => {
           <form onSubmit={handleSubmit}>
             <div className="form-fields-row">
               <div className="input-group">
-                <label>Discord ID</label>
+                <label>Discord Username / ID</label>
                 {/*  pattern="(.+)#(\d{4})" */}
-                <input type="text" pattern="(.+)#(\d{4})" value={discordUsername} placeholder="" onChange={e => setDiscordUsername(e.target.value)} style={{ width: '270px' }} required />
+                <input type="text" value={discordUsername} placeholder="pawankolhe#7887" onChange={e => setDiscordUsername(e.target.value)} style={{ width: '270px' }} required />
               </div>
               <div className="input-group">
                 <label>Points</label>

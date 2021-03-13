@@ -19,7 +19,7 @@ const LoginPage = (props) => {
     const fetchUserInfo = async () => {
       try{
         // API Call
-        const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/user`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_user`, {
           headers: {
             "Authorization": `Bearer ${jwtToken}`,
           },
