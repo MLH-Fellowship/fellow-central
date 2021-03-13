@@ -1,8 +1,8 @@
-from flask import Flask, redirect, sessions, request, jsonify, session, abort
+from flask import Flask, redirect, sessions, request, jsonify, session, abort, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 import requests
-import os
+import io, os
 from models import db, User, Points, Event
 from dotenv import load_dotenv
 from flask_jwt_extended import (
@@ -62,6 +62,27 @@ def discord():
         scope="identify email guilds",
     )
     return redirect(full_redirect_url)
+
+
+@app.route("/get_user_image")
+@jwt_required()
+def get_user_image():
+    """Obtains the user image for the *current* user
+
+    Returns:
+        BytesIO - jpeg mime type: An image of the user. Otherwise, a 404 response.
+    """
+
+    url = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
+        user_id=session.get("discord_id"),
+        avatar_hash=session.get("avatar")
+    )
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        return send_file(io.BytesIO(response.content), mimetype="image/jpeg")
+
+    return abort(404)
 
 
 @app.route("/discord/callback")
