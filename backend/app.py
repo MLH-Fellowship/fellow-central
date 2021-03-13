@@ -302,6 +302,13 @@ def create_event():
 @app.route("/get_user")
 @jwt_required()
 def get_user():
+    """Obtain user information. If a user is an admin, they can provide the optional "name" parameter
+    to their GET request to obtain details about any user.
+    If the user is a pod fellow, they can inquire about themselves only.
+
+    Returns:
+        json: payload describing conditions of query, success/failure and potentially user data.
+    """
     discord_id = get_jwt_identity()
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
