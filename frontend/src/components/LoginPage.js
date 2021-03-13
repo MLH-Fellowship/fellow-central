@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../sass/LoginPage.scss'
 import LoginButton from './LoginButton'
 import { InlineIcon } from '@iconify/react';
@@ -11,12 +11,15 @@ import queryString from 'query-string'
 
 const LoginPage = (props) => {
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const value = queryString.parse(location.search);
     const jwtToken = value.token || null;
 
     const fetchUserInfo = async () => {
+      setLoading(true);
+
       try{
         // API Call
         const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_user`, {
@@ -28,6 +31,7 @@ const LoginPage = (props) => {
           token: jwtToken,
           user: response.data.data
         });
+        setLoading(false);
 
         // Test
         // props.signIn({
@@ -42,6 +46,7 @@ const LoginPage = (props) => {
         // });
       } catch(e) {
         console.error(e);
+        setLoading(false);
       }
     }
 
@@ -60,7 +65,7 @@ const LoginPage = (props) => {
       <div className="LoginPageBox">
         <div className="LoginPageBox_title">Login</div>
         <div className="LoginPageBox_buttons">
-          <LoginButton colorCode="#6C89E0" text="Login with Discord" icon={<InlineIcon icon={bxlDiscord} />} onClick={handleLogin} />
+          <LoginButton colorCode="#6C89E0" text="Login with Discord" loading={loading} icon={<InlineIcon icon={bxlDiscord} />} onClick={handleLogin} />
         </div>
       </div>
 
