@@ -168,7 +168,7 @@ def add_points():
     """
     data = request.get_json(silent=True)['data']
 
-    amount = data['amount']
+    amount = data.get('amount')
     assignee = data['assignee']
     description = data['description']
     event_id = None
@@ -316,13 +316,21 @@ def get_events():
 
         for event in events:
             event_data = {
+                "id": event.id,
                 "name": event.name,
                 "start_time": event.start_time,
                 "end_time": event.end_time,
                 "points_amount": event.points_amount,
                 "event_link": event.event_link,
-                "vid_link": event.vid_link
+                "vid_link": event.vid_link,
             }
+
+            # Check if points are already claimed for event
+            if Points.query.filter_by(event_id=event.id, assignee=discord_id).first():
+                event_data['points_claimed'] = True
+            else:
+                event_data['points_claimed'] = False
+
             if user.role == 'admin':
                 event_data['secret_code'] = event.secret_code
 
@@ -463,6 +471,7 @@ def recent_points():
     })
 
 @app.route("/get_points_history")
+@jwt_required()
 def get_points_history():
     try:
         n = request.args.get('n') or 20  # Default 20
@@ -482,6 +491,12 @@ def get_points_history():
             }
 
             points_history_data.append(points_data)
+
+        # If user is not admin
+        discord_id = get_jwt_identity()
+        user = User.query.filter_by(id=discord_id).first()
+        if user.role != "admin":
+            points_history_data = list(filter(lambda p: p['assignee'] == user.name, points_history_data))
 
         return jsonify({
             "success": True,
