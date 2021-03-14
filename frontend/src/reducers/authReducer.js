@@ -11,7 +11,7 @@ export default function authReducer (state = INITIAL_STATE, action) {
     case SIGN_IN:
       if(action.payload.user.role.startsWith("Pod")) {
         const pod = action.payload.user.role;
-        action.payload.user.role = 'fellow'
+        action.payload.user.role = 'admin'
         action.payload.user.pod = pod;
       }
       sessionStorage.setItem('token', action.payload.token)

@@ -4,8 +4,9 @@ import { Icon } from '@iconify/react';
 import bxsTrophy from '@iconify-icons/bx/bxs-trophy';
 import bxsUser from '@iconify-icons/bx/bxs-user';
 import conditionWaitPoint from '@iconify-icons/carbon/condition-wait-point';
+import PuffLoader from "react-spinners/PuffLoader";
 
-const HighlightCard = ({ text, value, color, icon }) => {
+const HighlightCard = ({ text, value, color, icon, loading }) => {
   const computedColor = () => {
     switch(color) {
       case 'yellow':
@@ -38,7 +39,7 @@ const HighlightCard = ({ text, value, color, icon }) => {
         {text}
       </div>
       <div className="HighlightCard_value">
-        {value}
+        {loading ? <PuffLoader color="white" size="60" /> : value}
       </div>
       <div className="HighlightCard_icon">
         {computedIcon()}
