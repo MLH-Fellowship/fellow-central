@@ -322,6 +322,44 @@ def get_user():
             }
         })
 
+
+@app.route("/get_points_history")
+def get_points_history():
+
+    try:
+        n = request.args.get('n') or 20  # Default 20
+
+        points_history = Points.query.order_by(
+            Points.timestamp.desc()).limit(n).all()
+
+        points_history_data = []
+
+        for points in points_history:
+            # Get assignee's discord username
+            assignee = User.query.filter_by(id=points.assignee).first()
+            points_data = {
+                "amount": points.amount,
+                "assignee": assignee.name,
+                "description": points.description,
+                "event_id": points.event_id,
+                "timestamp": points.timestamp
+            }
+
+            points_history_data.append(points_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Points history fetched successfully",
+            "data": points_history_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

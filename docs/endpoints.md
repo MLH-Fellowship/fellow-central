@@ -92,3 +92,53 @@ Example unsuccessful output
 ```
 
 ---
+
+## **GET** `/get_points_history`
+
+### Input
+
+```HTTP
+GET /get_points_history?n=2 HTTP/1.1
+Host: 127.0.0.1:5000
+```
+
+### Param Attributes:
+- - _n_ : number of Points to fetch
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Points history fetched successfully",
+    "data": [
+        {
+            "amount": 1,
+            "assignee": "test#1234",
+            "description": "Discord",
+            "event_id": null,
+            "timestamp": "Sat, 13 Mar 2021 05:27:28 GMT"
+        },
+        {
+            "amount": 10,
+            "assignee": "test2#5678",
+            "description": "Event",
+            "event_id": 4,
+            "timestamp": "Sat, 13 Mar 2021 04:35:47 GMT"
+        }
+    ]
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
