@@ -27,26 +27,32 @@ let infoCollection = [
 const DashboardPage = ({ auth, ...props }) => {
   const [podPoints, setPodPoints] = useState(0)
   const [podRank, setPodRank] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchAllPodPointData = async () => {
+      setLoading(true)
       const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_all_pod_points`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
       });
+      setLoading(false)
 
       // Store response data
       const current_user_pod = auth.user.pod;
       const pod_names = Object.keys(response.data.data);
       const pod_list = []
       pod_names.forEach(pod => {
-        pod_list.push({ pod: pod, value: response.data.pod_list[pod] })
+        if(pod !== 'admin') {
+          pod_list.push({ pod: pod, value: response.data.data[pod] })
+        }
       })
       pod_list.sort((a, b) => b.value - a.value)
-      const rank = pod_list.findIndex(item => item.pod === current_user_pod) + 1
+      const index = pod_list.findIndex(item => item.pod === current_user_pod)
+      const rank = index + 1
 
-      setPodPoints(pod_list[current_user_pod])
+      setPodPoints(pod_list[index].value)
       setPodRank(rank)
     }
     
@@ -62,8 +68,8 @@ const DashboardPage = ({ auth, ...props }) => {
       <div className="page-content-container">
         <div className="highlights-container">
           <HighlightCard text="My Points" value={auth.user?.points_total} color="blue" icon="point" />
-          <HighlightCard text="Pod Points" value={podPoints} color="red" icon="point" />
-          <HighlightCard text="Pod Rank" value={podRank} color="yellow" icon="trophy" />
+          <HighlightCard text="Pod Points" value={podPoints} color="red" icon="point" loading={loading} />
+          <HighlightCard text="Pod Rank" value={podRank} color="yellow" icon="trophy" loading={loading} />
         </div>
 
         <InfoCard title="Activity this week">
