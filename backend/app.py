@@ -17,7 +17,7 @@ load_dotenv()
 
 DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
-REDIRECT_URI = "http://127.0.0.1:5000/discord/callback"
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 FELLOWSHIP_GUILD_ID = "818888976458973224"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CURRENT_FELLOWSHIP = "0"
@@ -166,9 +166,9 @@ def add_points():
     """
     Add points
     """
-    data = request.json
+    data = request.get_json(silent=True)['data']
 
-    amount = data['amount']
+    amount = data.get('amount')
     assignee = data['assignee']
     description = data['description']
     event_id = None
@@ -237,7 +237,7 @@ def add_points():
     db.session.add(new_point)
 
     # Add to user's total points
-    user.points_total += amount
+    user.points_total += int(amount)
 
     db.session.commit()
 
@@ -262,7 +262,7 @@ def create_event():
     Returns:
         Status request: The id of the object created.
     """
-    data = request.form
+    data = request.get_json(silent=True)['data']
 
     event_name = data["name"]
     start_time_f = data["start_time"]
@@ -297,15 +297,6 @@ def create_event():
         success = False
 
         return jsonify({"success": success, "message": message})
-
-# other endpoints that pawan request:
-#    - 
-#    -
-#    -
-#    -
-#    -
-#    -
-
 
 
 @app.route("/get_all_pod_points")
@@ -346,8 +337,57 @@ def get_all_pod_points():
             "message": f"Error: {e}"
         })
 
+          
+@app.route("/get_events")
+@jwt_required()
+def get_events():
+    """ Get all events data
 
+    Returns:
+        json: payload describing conditions of query, success/failure and events data.
+    """
+    try:
+        discord_id = get_jwt_identity()
+        user = User.query.filter_by(id=discord_id).first()
+        events = Event.query.all()
 
+        events_data = []
+
+        for event in events:
+            event_data = {
+                "id": event.id,
+                "name": event.name,
+                "start_time": event.start_time,
+                "end_time": event.end_time,
+                "points_amount": event.points_amount,
+                "event_link": event.event_link,
+                "vid_link": event.vid_link,
+            }
+
+            # Check if points are already claimed for event
+            if Points.query.filter_by(event_id=event.id, assignee=discord_id).first():
+                event_data['points_claimed'] = True
+            else:
+                event_data['points_claimed'] = False
+
+            if user.role == 'admin':
+                event_data['secret_code'] = event.secret_code
+
+            events_data.append(event_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Events fetched successfully",
+            "data": events_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+          
 @app.route("/get_pod_points")
 @jwt_required()
 def get_pod_points():
@@ -409,7 +449,7 @@ def serialize_user(status, message, user=None):
         }
     })
 
-
+          
 @app.route("/get_user")
 @jwt_required()
 def get_user():
@@ -441,7 +481,7 @@ def get_user():
         else:
             return serialize_user(True, "Found your user.", user)
 
-
+ 
 @app.route("/recent_points")
 @jwt_required()
 def recent_points():
@@ -462,14 +502,86 @@ def recent_points():
             "amount": point.amount,
             "user": User.query.filter_by(id=point.assignee).first().name
         })
-
+          
     return jsonify({
         "success": True,
         "message": "{} out of {} entries found.".format(len(data), num_entries),
         "data": data,
     })
 
+@app.route("/get_points_history")
+@jwt_required()
+def get_points_history():
+    try:
+        n = request.args.get('n') or 20  # Default 20
 
+        points_history = Points.query.join(User).order_by(
+            Points.timestamp.desc()).limit(n).all()
+
+        points_history_data = []
+
+        for points in points_history:
+            points_data = {
+                "amount": points.amount,
+                "assignee": points.user.name,
+                "description": points.description,
+                "event_id": points.event_id,
+                "timestamp": points.timestamp
+            }
+
+            points_history_data.append(points_data)
+
+        # If user is not admin
+        discord_id = get_jwt_identity()
+        user = User.query.filter_by(id=discord_id).first()
+        if user.role != "admin":
+            points_history_data = list(filter(lambda p: p['assignee'] == user.name, points_history_data))
+
+        return jsonify({
+            "success": True,
+            "message": "Points history fetched successfully",
+            "data": points_history_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+
+@app.route("/get_top_fellows")
+def get_top_fellows():
+
+    try:
+        n = request.args.get('n') or 10  # Default 10
+
+        top_fellows = User.query.filter(User.role != 'admin').order_by(
+            User.points_total.desc()).limit(n).all()
+
+        top_fellows_data = []
+
+        for fellow in top_fellows:
+            fellow_data = {
+                "name": fellow.name,
+                "points_total": fellow.points_total
+            }
+
+            top_fellows_data.append(fellow_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Top fellows fetched successfully",
+            "data": top_fellows_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+          
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

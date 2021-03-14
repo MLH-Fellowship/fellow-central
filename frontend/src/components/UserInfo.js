@@ -6,7 +6,7 @@ const UserInfo = ({ user }) => {
   return (
     <div className="UserInfo">
       <div className="UserInfo_image">
-        <img src='https://pawankolhe.com/img/pawankolhe.jpg' alt="Profile" />
+        <img src={user.avatar_url} alt="Profile" />
       </div>
       <div className="UserInfo_text">
         <div className="UserInfo_text_name">{user.name}</div>

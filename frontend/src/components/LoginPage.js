@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import queryString from 'query-string'
 
-const LoginPage = (props) => {
+const LoginPage = ({ signIn }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
 
@@ -27,14 +27,14 @@ const LoginPage = (props) => {
             "Authorization": `Bearer ${jwtToken}`,
           },
         });
-        props.signIn({
+        signIn({
           token: jwtToken,
           user: response.data.data
         });
         setLoading(false);
 
         // Test
-        // props.signIn({
+        // signIn({
         //   token: jwtToken,
         //   user: {
         //     discordId: 'pawankolhe#7887',
@@ -53,7 +53,7 @@ const LoginPage = (props) => {
     if(jwtToken) {
       fetchUserInfo()
     }
-  }, [location, props]);
+  }, [signIn, location]);
 
   const handleLogin = async () => {
     // Redirect to Discord OAuth

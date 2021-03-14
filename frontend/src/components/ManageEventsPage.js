@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../sass/ManageEventsPage.scss'
 import PageHeader from './PageHeader'
 import InfoCard from './InfoCard'
@@ -6,20 +6,40 @@ import Button from './Button'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import PulseLoader from "react-spinners/PulseLoader";
 
-const ManageEventsPage = ({ auth, events, ...props }) => {
+const ManageEventsPage = ({ auth, ...props }) => {
+  const [events, setEvents] = useState([])
   const [name, setName] = useState('');
   const [starts, setStarts] = useState('');
   const [ends, setEnds] = useState('');
   const [link, setLink] = useState('');
   const [secretCode, setSecretCode] = useState('');
   const [points, setPoints] = useState('');
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchEventsData = async () => {
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_events`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`,
+        },
+      });
+
+      // Store response data
+      setEvents([...response.data.data].reverse())
+    }
+
+    fetchEventsData();
+  }, [auth.token])
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Call API
     try {
+      setLoading(true)
       const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/create_event`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
@@ -33,16 +53,16 @@ const ManageEventsPage = ({ auth, events, ...props }) => {
           event_link: link,
         }
       });
-      props.createPoint({
-        id: response.data.id,
+      toast(`🔵 Event created`)
+
+      setEvents([{
         name: name,
         start_time: starts,
         end_time: ends,
         secret_code: secretCode,
         points_amount: points,
         event_link: link,
-      });
-      toast(`🔵 Event created`)
+      }, ...events])
       
       setName('')
       setStarts('')
@@ -50,8 +70,11 @@ const ManageEventsPage = ({ auth, events, ...props }) => {
       setLink('')
       setSecretCode('')
       setPoints('')
+      setLoading(false)
     } catch(e) {
+      console.error(e)
       toast.error(`🔴 Something went wrong`)
+      setLoading(false)
     }
   }
 
@@ -88,28 +111,36 @@ const ManageEventsPage = ({ auth, events, ...props }) => {
                 <input type="number" min="0" value={points} onChange={e => setPoints(e.target.value)} style={{ width: '150px' }} required />
               </div>
             </div>
-            <Button text="Add" type="submit" style={{ marginTop: '25px' }} />
+            <Button text="Add" loading={loading} type="submit" style={{ marginTop: '25px' }} />
           </form>
         </InfoCard>
         <InfoCard title="Events">
-          <div className="table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Starts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {events && events.map(event => 
-                  <tr key={event.id}>
-                    <td>{event.title}</td>
-                    <td>{event.start}</td>
+          {events.length > 0 ? 
+            <div className="table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Starts</th>
+                    <th>Code</th>
+                    <th>Points</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {events.map(event => 
+                    <tr key={event.id}>
+                      <td>{event.name}</td>
+                      <td>{new Date(event.start_time).toDateString()}</td>
+                      <td>{event.secret_code}</td>
+                      <td>{event.points_amount}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            :
+            <PulseLoader color="#1D539F" size="10px" margin="10px" /> 
+          }
         </InfoCard>
       </div>
     </div>
@@ -118,8 +149,7 @@ const ManageEventsPage = ({ auth, events, ...props }) => {
 
 const mapStateToProps = (state) => {
   return {
-    auth: state.auth,
-    events: state.events
+    auth: state.auth
   }
 }
 

@@ -145,6 +145,142 @@ Example unsuccessful output
 
 ---
 
+## **GET** `/get_points_history`
+
+### Input
+
+```HTTP
+GET /get_points_history?n=2 HTTP/1.1
+Host: 127.0.0.1:5000
+```
+
+### Params Attributes:
+- _n_ : number of Points to fetch
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Points history fetched successfully",
+    "data": [
+        {
+            "amount": 1,
+            "assignee": "test#1234",
+            "description": "Discord",
+            "event_id": null,
+            "timestamp": "Sat, 13 Mar 2021 05:27:28 GMT"
+        },
+        {
+            "amount": 10,
+            "assignee": "test2#5678",
+            "description": "Event",
+            "event_id": 4,
+            "timestamp": "Sat, 13 Mar 2021 04:35:47 GMT"
+        }
+    ]
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
+
+## **GET** `/get_events`
+
+### Input
+
+```HTTP
+GET /get_events HTTP/1.1
+Host: 127.0.0.1:5000
+Authorization: Bearer xxxx.yyyy.zzzz
+```
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Events fetched successfully",
+    "data": [
+        {
+            "name": "Test",
+            "points_amount": 10,
+            "secret_code": "SecretCode",
+            "start_time": "Sat, 06 Mar 2021 19:44:00 GMT",
+            "end_time": "Sat, 06 Mar 2021 19:44:00 GMT",
+            "event_link": "https://twitch.tv/MLH/329920034",
+            "vid_link": null
+        }
+    ]
+}
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+    
+## **GET** `/get_top_fellows`
+
+### Input
+
+```HTTP
+GET /get_top_fellows?n=2 HTTP/1.1
+Host: 127.0.0.1:5000
+```
+
+### Param Attributes:
+- - _n_ : number of fellows to fetch
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Top fellows fetched successfully",
+    "data": [
+        {
+            "name": "test#1234",
+            "points_total": 17
+        },
+        {
+            "name": "test2#5678",
+            "points_total": 13
+        }
+    ]
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
+
+---
+
 ## **GET** `/get_pod_points`
 
 ### Input
@@ -171,8 +307,8 @@ Example unsuccessful output
 
 ```json
 {
-    "success": false,
-    "message": "Pod not found."
+  "success": false,
+  "message": "Pod not found."
 }
 ```
 

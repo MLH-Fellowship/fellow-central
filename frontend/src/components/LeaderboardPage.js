@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import { HorizontalBar } from 'react-chartjs-2';
 import RankItem from './RankItem';
 import axios from 'axios'
+import PulseLoader from "react-spinners/PulseLoader";
 
 const options = {
   responsive: true,
@@ -37,14 +38,26 @@ const options = {
 
 const LeaderboardPage = ({ auth }) => {
   const [podData, setPodData] = useState({})
+  const [topFellows, setTopFellows] = useState([])
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/view/all_pod_points`, {
+    const fetchPodPointsData = async () => {
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_all_pod_points`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
       });
+      // const response = {
+      //   data: {
+      //       "pod_list": {
+      //       "Pod 2.0.0": 584,
+      //       "Pod 2.0.1": 354,
+      //       "Pod 2.0.2": 304,
+      //       "Pod 2.0.3": 504,
+      //       "Pod 2.0.4": 134
+      //     }
+      //   }
+      // }
 
       // Store response data
       const pod_names = Object.keys(response.data.pod_list);
@@ -63,14 +76,26 @@ const LeaderboardPage = ({ auth }) => {
             data: pod_list.map(p => p.value),
             backgroundColor: 'rgba(29, 83, 159, 0.6)',
             borderColor: 'rgba(29, 83, 159, 1)',
-            borderWidth: 5,
+            borderWidth: 3,
           }
         ]
       }
       setPodData(data)
     }
 
-    fetchData();
+    const fetchTopFellowsData = async () => {
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_top_fellows`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`,
+        },
+      });
+
+      // Store response data
+      setTopFellows(response.data.data)
+    }
+
+    fetchPodPointsData();
+    fetchTopFellowsData();
   }, [auth.token])
 
   return (
@@ -96,17 +121,23 @@ const LeaderboardPage = ({ auth }) => {
                 </div>
               </InfoCard>
               <InfoCard title="Fellows">
-                <div className="rank-list">
-                  <RankItem position={1} username="pawankolhe#7887" points={105} color="yellow" />
-                  <RankItem position={2} username="simplord#7639" points={86} color="red" />
-                  <RankItem position={3} username="Ammo#5945" points={78} color="blue" />
-                </div>
+                {topFellows.length > 0 ?
+                  <div className="rank-list">
+                    {topFellows.length >= 1 ? <RankItem position={1} username={topFellows[0].name} points={topFellows[0].points_total} color="yellow" /> : ''}
+                    {topFellows.length >= 2 ? <RankItem position={2} username={topFellows[1].name} points={topFellows[1].points_total} color="red" /> : ''}
+                    {topFellows.slice(2).map((fellow, i) => 
+                      <RankItem key={i+3} position={i+3} username={fellow.name} points={fellow.points_total} color="blue" />)
+                    }
+                  </div>
+                  :
+                  <PulseLoader color="#1D539F" size="10" margin="10" /> 
+                }
               </InfoCard>
             </div>
           </TabPanel>
           <TabPanel>
             <InfoCard title="Pods">
-              Content
+              Coming soon
             </InfoCard>
           </TabPanel>
         </Tabs>
