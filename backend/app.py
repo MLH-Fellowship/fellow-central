@@ -551,12 +551,19 @@ def get_total_fellows():
     Returns:
         json: json payload containing requested information
     """
-    num_fellows = User.query.count()
-
-    return jsonify({
+    try:
+        num_fellows = User.query.count()
+    
+        return jsonify({
             "success": True,
             "message": "Number of fellows retrieved successfully",
             "data": num_fellows
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
         })
 
           
