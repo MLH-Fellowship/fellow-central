@@ -17,7 +17,7 @@ load_dotenv()
 
 DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
-REDIRECT_URI = "http://127.0.0.1:5000/discord/callback"
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 FELLOWSHIP_GUILD_ID = "818888976458973224"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CURRENT_FELLOWSHIP = "0"
@@ -298,7 +298,49 @@ def create_event():
 
         return jsonify({"success": success, "message": message})
 
+          
+@app.route("/get_events")
+@jwt_required()
+def get_events():
+    """ Get all events data
 
+    Returns:
+        json: payload describing conditions of query, success/failure and events data.
+    """
+    try:
+        discord_id = get_jwt_identity()
+        user = User.query.filter_by(id=discord_id).first()
+        events = Event.query.all()
+
+        events_data = []
+
+        for event in events:
+            event_data = {
+                "name": event.name,
+                "start_time": event.start_time,
+                "end_time": event.end_time,
+                "points_amount": event.points_amount,
+                "event_link": event.event_link,
+                "vid_link": event.vid_link
+            }
+            if user.role == 'admin':
+                event_data['secret_code'] = event.secret_code
+
+            events_data.append(event_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Events fetched successfully",
+            "data": events_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+          
 @app.route("/get_pod_points")
 @jwt_required()
 def get_pod_points():
@@ -360,7 +402,7 @@ def serialize_user(status, message, user=None):
         }
     })
 
-
+          
 @app.route("/get_user")
 @jwt_required()
 def get_user():
