@@ -105,12 +105,12 @@ Example unsuccessful output
 
 ---
 
-## **GET** `/get_total_fellows`
+## **GET** `/get_total_registered_fellows`
 
 ### Input
 
 ```HTTP
-POST /get_total_fellows HTTP/1.1
+POST /get_total_registered_fellows HTTP/1.1
 Host: 127.0.0.1:5000
 Content-Type: application/json
 ```

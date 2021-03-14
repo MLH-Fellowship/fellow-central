@@ -543,7 +543,7 @@ def get_top_fellows():
         })
 
 
-@app.route("/get_total_fellows")
+@app.route("/get_total_registered_fellows")
 @jwt_required()
 def get_total_fellows():
     """Retrieve the number of fellows in the app.
