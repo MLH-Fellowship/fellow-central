@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../sass/EventsPage.scss'
 import ReactModal from 'react-modal';
 import { InlineIcon } from '@iconify/react';
@@ -9,15 +9,35 @@ import EventCard from './EventCard'
 import PageHeader from './PageHeader'
 import Button from './Button';
 import { connect } from 'react-redux'
-import { setEvents, claimEventPoints } from '../actions'
+import { setEvents, claimEventPoints, updateProfile } from '../actions'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import PulseLoader from "react-spinners/PulseLoader";
 
-const EventsPage = ({ auth, events, ...props }) => {
+const EventsPage = ({ auth, events, setEvents, ...props }) => {
   const [isModelOpen, setIsModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [secretCodeLoading, setSecretCodeLoading] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState('');
+  const [eventsLoading, setEventsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchEventsData = async () => {
+      setEventsLoading(true)
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_events`, {
+        headers: {
+          "Authorization": `Bearer ${auth.token}`,
+        },
+      });
+
+      // Store response data
+      setEvents(response.data.data)
+      setEventsLoading(false)
+    }
+
+    fetchEventsData();
+  }, [setEvents, auth.token])
 
   const toggleModal = (isOpen) => {
     setIsModalOpen(isOpen === undefined ? !isModelOpen : isOpen);
@@ -36,19 +56,30 @@ const EventsPage = ({ auth, events, ...props }) => {
         },
         data: {
           event_id: selectedEventId,
+          assignee: auth.user.id,
           secret_input: secretCode,
           description: 'Event',
         }
       });
-      toast(`🔵 ${response.data.message}`)
+      
+      if('data' in response.data) {
+        toast(`🔵 ${response.data.message}`)
+      } else {
+        toast.error(`🔴 ${response.data.message}`)
+      }
       
       toggleModal(false);
       setSecretCodeLoading(false);
       props.claimEventPoints(selectedEventId);
+      props.updateProfile({
+        points_total: auth.user.points_total + response.data.data.amount
+      })
       setSelectedEventId('')
       setSecretCode('')
     } catch(e) {
       toast.error(`🔴 Something went wrong`)
+      console.log(e)
+      setSecretCodeLoading(false);
     }
   }
 
@@ -60,25 +91,37 @@ const EventsPage = ({ auth, events, ...props }) => {
         <div>
           <div className="page-subtitle">Active Events</div>
           <div className="LeaderboardPage_ActiveEvents">
-            {events
-              .filter(event => event.isActive)
-              .map(({ id, title, start, link, isActive, pointsClaimed }) =>
-                <EventCard key={id} id={id} title={title} start={start} link={link} isActive={isActive} pointsClaimed={pointsClaimed} onClaimPointsClick={() => {
-                  setSelectedEventId(id);
-                  toggleModal();
-                }} />
-              )
+            {eventsLoading === false ?
+              <>
+                {events
+                  .filter(event => event.isActive)
+                  .map(({ id, title, start, link, isActive, pointsClaimed }) =>
+                    <EventCard key={id} id={id} title={title} start={start} link={link} isActive={isActive} pointsClaimed={pointsClaimed} onClaimPointsClick={() => {
+                      setSelectedEventId(id);
+                      toggleModal();
+                    }} />
+                  )
+                }
+              </>
+              :
+              <PulseLoader color="#1D539F" size="10px" margin="10px" /> 
             }
           </div>
         </div>
         <div>
           <div className="page-subtitle">Past Events</div>
           <div className="LeaderboardPage_PastEvents">
-            {events
-              .filter(event => event.isActive === false)
-              .map(({ id, title, start, vod, isActive }) =>
-                <EventCard key={id} id={id} title={title} start={start} vod={vod} isActive={isActive} />
-              )
+            {eventsLoading === false ?
+              <>
+                {events
+                  .filter(event => event.isActive === false)
+                  .map(({ id, title, start, vod, isActive }) =>
+                    <EventCard key={id} id={id} title={title} start={start} vod={vod} isActive={isActive} />
+                  )
+                }
+              </>
+              :
+              <PulseLoader color="#1D539F" size="10px" margin="10px" /> 
             }
           </div>
         </div>
@@ -123,4 +166,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, { setEvents, claimEventPoints })(EventsPage)
+export default connect(mapStateToProps, { setEvents, claimEventPoints, updateProfile })(EventsPage)

@@ -13,9 +13,15 @@ const EventCard = ({ id, title, start, link, vod, isActive = false, pointsClaime
           {start}
         </div>
         <div className="EventCard_Link">
-          <a href={isActive ? link : vod} target="_blank" rel="noreferrer">
-            {isActive ? <InlineIcon icon={bxLinkExternal} /> : <InlineIcon icon={bxVideo} />}
-          </a>
+        {isActive ?
+          link ? <a href={link} target="_blank" rel="noreferrer">
+            <InlineIcon icon={bxLinkExternal} />
+          </a> : ''
+          :
+          vod ? <a href={vod} target="_blank" rel="noreferrer">
+            <InlineIcon icon={bxVideo} />
+          </a> : ''
+        }
         </div>
       </div>
       <div className={`EventCard_Content ${isActive ? 'EventCard_Content_Primary' : 'EventCard_Content_Secondary'}`}>
