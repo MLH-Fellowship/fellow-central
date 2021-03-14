@@ -254,6 +254,7 @@ Example successful output
 
 ```json
 {
+    "success": true,
     "message": "Pod found.",
     "Pod 0.0.1": 342
 }
@@ -263,6 +264,7 @@ Example unsuccessful output
 
 ```json
 {
+  "success": false,
   "message": "Pod not found."
 }
 ```
