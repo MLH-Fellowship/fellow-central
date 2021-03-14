@@ -25,24 +25,12 @@ let infoCollection = [
 ]
 
 const DashboardPage = ({ auth, ...props }) => {
-  const [myPoints, setMyPoints] = useState(0)
   const [podPoints, setPodPoints] = useState(0)
   const [podRank, setPodRank] = useState(0)
 
   useEffect(() => {
-    const fetchUserPointsData = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/view/user_points`, {
-        headers: {
-          "Authorization": `Bearer ${auth.token}`,
-        },
-      });
-
-      // Store response data
-      setMyPoints(response.data.points)
-    }
-
     const fetchAllPodPointData = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/view/all_pod_points`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_all_pod_points`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
@@ -50,7 +38,7 @@ const DashboardPage = ({ auth, ...props }) => {
 
       // Store response data
       const current_user_pod = auth.user.pod;
-      const pod_names = Object.keys(response.data.pod_list);
+      const pod_names = Object.keys(response.data.data);
       const pod_list = []
       pod_names.forEach(pod => {
         pod_list.push({ pod: pod, value: response.data.pod_list[pod] })
@@ -62,7 +50,6 @@ const DashboardPage = ({ auth, ...props }) => {
       setPodRank(rank)
     }
     
-    fetchUserPointsData();
     fetchAllPodPointData();
   }, [auth])
 
@@ -74,7 +61,7 @@ const DashboardPage = ({ auth, ...props }) => {
 
       <div className="page-content-container">
         <div className="highlights-container">
-          <HighlightCard text="My Points" value={myPoints} color="blue" icon="point" />
+          <HighlightCard text="My Points" value={auth.user?.points_total} color="blue" icon="point" />
           <HighlightCard text="Pod Points" value={podPoints} color="red" icon="point" />
           <HighlightCard text="Pod Rank" value={podRank} color="yellow" icon="trophy" />
         </div>

@@ -80,6 +80,15 @@ const Nav = ({ role }) => {
             </div>
           </NavLink>
 
+          <NavLink to="points-history" style={{ textDecoration: 'none' }} activeClassName="Nav-link-selected">
+            <div className="Nav_link">
+              <div className="Nav_link_icon">
+                <Icon icon={conditionWaitPoint} />
+              </div>
+              <div className="Nav_link_text">Points History</div>
+            </div>
+          </NavLink>
+
           <NavLink to="help" style={{ textDecoration: 'none' }} activeClassName="Nav-link-selected">
             <div className="Nav_link">
               <div className="Nav_link_icon">

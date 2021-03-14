@@ -9,6 +9,12 @@
   font-size: 1rem;
   font-family: 'Work Sans', sans-serif;
   outline: none;
+
+  &.loading {
+    text-align: center;
+    pointer-events: none;
+    opacity: 0.90;
+  }
 }
 
 .Button-Primary {

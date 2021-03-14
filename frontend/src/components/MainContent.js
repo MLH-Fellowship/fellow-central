@@ -14,6 +14,7 @@ import AdminDashboardPage from './AdminDashboardPage';
 import ManageEventsPage from './ManageEventsPage';
 import SendPointsPage from './SendPointsPage';
 import HelpPage from './HelpPage';
+import PointsHistoryPage from './PointsHistoryPage';
 
 // we need to map the `scale` prop we define below
 // to the transform style property
@@ -98,6 +99,9 @@ const MainContent = ({ role }) => {
           </Route>
           <Route path="/claim-points">
             <ClaimPointsPage />
+          </Route>
+          <Route path="/points-history">
+            <PointsHistoryPage />
           </Route>
           <Route path="/help">
             <HelpPage />
