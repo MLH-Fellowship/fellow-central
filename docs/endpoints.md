@@ -177,3 +177,41 @@ Example unsuccessful output
 ```
 
 ---
+
+## **GET** `/get_all_pod_points`
+
+### Input
+
+```HTTP
+POST /points/add HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+```
+
+
+### Output
+
+Example successful output
+
+```json
+{
+    "data": {
+        "Pod 0.0.0": 162,
+        "Pod 0.0.1": 0,
+        "admin": 6
+    },
+    "message": "Successfully retreived points for all pods",
+    "success": true
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
