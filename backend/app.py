@@ -308,7 +308,7 @@ def get_pod_points():
         json: Payload containing the pod name and the points.
     """
 
-    pod = request.args("pod")
+    pod = request.args["pod"]
 
     # Ideally this would be something like:
     # SELECT SUM(points_total)
@@ -317,19 +317,19 @@ def get_pod_points():
     #
     # But I honestly have NO clue how to do this with SQL alchemy syntax.
 
-    fellows_in_pod = User.query.filter_by(pod = pod)
+    fellows_in_pod = User.query.filter_by(role = pod)
     if fellows_in_pod is not None:
 
         points = 0
         for fellow in fellows_in_pod:
-            points = points + fellow.point
+            points = points + fellow.points_total
 
         return jsonify({
             "success": True,
             "message": "Pod found.",
             str(pod): points
         })
-    
+
     return jsonify({
         "success": False,
         "message": "Pod not found."
@@ -391,6 +391,34 @@ def get_user():
 
         else:
             return serialize_user(True, "Found your user.", user)
+
+
+@app.route("/recent_points")
+@jwt_required()
+def recent_points():
+    num_entries = request.args("num_entries")
+
+    # Ideally should be something like this:
+    # SELECT name, timestamp, amount FROM
+    #   points LEFT JOIN user ON user.id = points.id
+    #   DESC LIMIT num_entries
+
+    # TODO: Join with Users table to get the *Discord* name, not the unique ID.
+    recent_points = session.query(Points).order_by(Points.timestamp)[0:num_entries]
+
+    data = []
+    for point in recent_points:
+        data.append({
+            "timestamp": point.timestamp,
+            "amount": point.amount,
+            "user": point.id,
+        })
+
+    return jsonify({
+        "success": True,
+        "message": "{} out of {} entries found.".format(len(data), num_entries),
+        "data": data,
+    })
 
 
 if __name__ == '__main__':
