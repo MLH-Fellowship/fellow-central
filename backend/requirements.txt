@@ -32,3 +32,4 @@ yarl==1.6.3
 requests==2.25.1
 Flask_JWT_Extended==4.1.0
 Flask_Cors==3.0.10
+gunicorn
