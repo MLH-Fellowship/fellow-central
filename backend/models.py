@@ -13,13 +13,15 @@ class User(db.Model):
     email = db.Column(db.String(), unique=True, nullable=False)
     role = db.Column(db.String(), nullable=False)
     points_total = db.Column(db.Integer(), nullable=False)
+    avatar = db.Column(db.String(), nullable=False)
 
-    def __init__(self, id, name, email, role):
+    def __init__(self, id, name, email, role, avatar):
         self.id = id
         self.name = name
         self.email = email
         self.role = role
         self.points_total = 0
+        self.avatar = avatar
 
 
 class Points(db.Model):

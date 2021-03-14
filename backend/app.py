@@ -151,8 +151,12 @@ def discord_callback():
         if User.query.filter_by(id=discord_id).first():
             message = "Success: Logged in!"
         else:
-            new_user = User(id=discord_id, name=screen_name,
-                            email=email, role=role)
+            new_user = User(id=discord_id,
+                            name=screen_name,
+                            email=email,
+                            role=role,
+                            avatar=avatar)
+
             db.session.add(new_user)
             db.session.commit()
             message = "Success: User registered!"
@@ -427,29 +431,29 @@ def get_pod_points():
 
 def serialize_user(status, message, user=None):
 
+    response = {}
+    response["success"] = status
+    response["message"] = message
+
     if user is None:
-        return jsonify({
-            "success": status,
-            "message": message,
-        })
+        return jsonify(response)
 
-    return jsonify({
-        "success": status,
-        "message": message,
-        "data": {
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-            "role": user.role,
-            "points_total": user.points_total,
-            "avatar_url": "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
-                user_id=session.get("discord_id"),
-                avatar_hash=session.get("avatar")
-            )
-        }
-    })
+    data = {}
+    data["id"] = user.id,
+    data["name"] = user.name,
+    data["email"] = user.email,
+    data["role"] = user.role,
+    data["points_total"] = user.points_total,
+    data["avatar_url"] = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
+        user_id=user.id,
+        avatar_hash=user.avatar
+    )
 
-          
+    response["data"] = data
+
+    return jsonify(response)
+
+
 @app.route("/get_user")
 @jwt_required()
 def get_user():
@@ -460,7 +464,7 @@ def get_user():
     Returns:
         json: payload describing conditions of query, success/failure and potentially user data.
     """
-    discord_id = get_jwt_identity()
+
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
         return serialize_user(False, "User not found.")
