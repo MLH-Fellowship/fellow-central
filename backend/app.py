@@ -542,6 +542,23 @@ def get_top_fellows():
             "message": f"Error: {e}"
         })
 
+
+@app.route("/get_total_fellows")
+@jwt_required()
+def get_total_fellows():
+    """Retrieve the number of fellows in the app.
+
+    Returns:
+        json: json payload containing requested information
+    """
+    num_fellows = User.query.count()
+
+    return jsonify({
+            "success": True,
+            "message": "Number of fellows retrieved successfully",
+            "data": num_fellows
+        })
+
           
 if __name__ == '__main__':
     with app.app_context():
