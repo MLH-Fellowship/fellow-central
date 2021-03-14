@@ -302,9 +302,30 @@ def create_event():
 @app.route("/get_pod_points")
 @jwt_required()
 def get_pod_points():
-    """Stub
+    """Return all the points for a single pod.
+
+    Returns:
+        json: Payload containing the pod name and the points.
     """
-    pass
+
+    pod = request.args("pod")
+
+    # Ideally this would be something like:
+    # SELECT SUM(points_total)
+    # FROM users
+    # WHERE role=pod;
+    #
+    # But I honestly have NO clue how to do this with SQL alchemy syntax.
+
+    fellows_in_pod = User.query.filter_by(pod=pod)
+    points = 0
+    for fellow in fellows_in_pod:
+        points = points + fellow.point
+
+    return {
+        "success": True,
+        str(pod): points
+    }
 
 
 def serialize_user(status, message, user=None):
