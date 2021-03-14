@@ -317,26 +317,34 @@ def get_pod_points():
     #
     # But I honestly have NO clue how to do this with SQL alchemy syntax.
 
-    fellows_in_pod = User.query.filter_by(pod=pod)
-    points = 0
-    for fellow in fellows_in_pod:
-        points = points + fellow.point
+    fellows_in_pod = User.query.filter_by(pod = pod)
+    if fellows_in_pod is not None:
 
-    return {
-        "success": True,
-        str(pod): points
-    }
+        points = 0
+        for fellow in fellows_in_pod:
+            points = points + fellow.point
+
+        return jsonify({
+            "success": True,
+            "message": "Pod found.",
+            str(pod): points
+        })
+    
+    return jsonify({
+        "success": False,
+        "message": "Pod not found."
+    })
 
 
 def serialize_user(status, message, user=None):
 
     if user is None:
-        return {
+        return jsonify({
             "success": status,
             "message": message,
-        }
+        })
 
-    return {
+    return jsonify({
         "success": status,
         "message": message,
         "data": {
@@ -350,7 +358,7 @@ def serialize_user(status, message, user=None):
                 avatar_hash=session.get("avatar")
             )
         }
-    }
+    })
 
 
 @app.route("/get_user")
