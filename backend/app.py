@@ -1,8 +1,8 @@
-from flask import Flask, redirect, sessions, request, jsonify, session, abort, send_file
+from flask import Flask, redirect, sessions, request, jsonify, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 import requests
-import io, os
+import os
 from models import db, User, Points, Event
 from dotenv import load_dotenv
 from flask_jwt_extended import (
@@ -62,27 +62,6 @@ def discord():
         scope="identify email guilds",
     )
     return redirect(full_redirect_url)
-
-
-@app.route("/get_user_image")
-@jwt_required()
-def get_user_image():
-    """Obtains the user image for the *current* user
-
-    Returns:
-        BytesIO - jpeg mime type: An image of the user. Otherwise, a 404 response.
-    """
-
-    url = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
-        user_id=session.get("discord_id"),
-        avatar_hash=session.get("avatar")
-    )
-
-    response = requests.get(url)
-    if response.status_code == 200:
-        return send_file(io.BytesIO(response.content), mimetype="image/jpeg")
-
-    return abort(404)
 
 
 @app.route("/discord/callback")
@@ -320,6 +299,39 @@ def create_event():
         return jsonify({"success": success, "message": message})
 
 
+@app.route("/get_pod_points")
+@jwt_required()
+def get_pod_points():
+    """Stub
+    """
+    pass
+
+
+def serialize_user(status, message, user=None):
+
+    if user is None:
+        return {
+            "success": status,
+            "message": message,
+        }
+
+    return {
+        "success": status,
+        "message": message,
+        "data": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "points_total": user.points_total,
+            "avatar_url": "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
+                user_id=session.get("discord_id"),
+                avatar_hash=session.get("avatar")
+            )
+        }
+    }
+
+
 @app.route("/get_user")
 @jwt_required()
 def get_user():
@@ -333,46 +345,23 @@ def get_user():
     discord_id = get_jwt_identity()
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
-        return {
-            "success": False,
-            "message": "User not found"
-        }
+        return serialize_user(False, "User not found.")
+
     else:
         # check if this is a fellow inquiring about their point total,
         # or if this is an admin inquiring about a fellow's total.
         if user.role == "admin":
             # get the specified info for admin
-            u_discord_id = request.args.get('name')
-            u_user = User.query.filter_by(name=u_discord_id).first()
-            if u_user is None:
-                return {
-                    "success": False,
-                    "message": "The requested fellow was not found."
-                }
+            r_discord_display_name = request.args.get('name')
+            r_user = User.query.filter_by(name=r_discord_display_name).first()
+            if r_user is None:
+                return serialize_user(False, "The requested fellow was not found.")
+
             else:
-                return jsonify({
-                    "success": True,
-                    "message": "Fellow found",
-                    "data": {
-                        "id": u_user.id,
-                        "name": u_user.name,
-                        "email": u_user.email,
-                        "role": u_user.role,
-                        "points_total": u_user.points_total
-                    }
-                })
+                return serialize_user(True, "Fellow found.", r_user)
+
         else:
-            return jsonify({
-                "success": True,
-                "message": "Found your user",
-                "data": {
-                    "id": user.id,
-                    "name": user.name,
-                    "email": user.email,
-                    "role": user.role,
-                    "points_total": user.points_total
-                }
-            })
+            return serialize_user(True, "Found your user.", user)
 
 
 if __name__ == '__main__':
