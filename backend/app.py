@@ -298,6 +298,45 @@ def create_event():
 
         return jsonify({"success": success, "message": message})
 
+
+@app.route("/get_all_pod_points")
+@jwt_required()
+def get_all_pod_points():
+    """Return points for all the pods in the fellowship.
+
+    Returns:
+        json: payload with all the pods and their points.
+    """
+
+    try:
+
+        data = {}
+
+        all_pods = User.query.distinct(User.role)
+
+        for pod in all_pods:
+
+            fellows_in_pod = User.query.filter_by(role = str(pod.role))
+            if fellows_in_pod is not None:
+
+                points = 0
+                for fellow in fellows_in_pod:
+                    points = points + fellow.points_total
+
+                data[str(pod.role)] = points
+
+        return jsonify({
+            "success": True,
+            "message": "Successfully retrieved points for all pods",
+            "data": data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
           
 @app.route("/get_events")
 @jwt_required()
