@@ -298,6 +298,35 @@ def create_event():
 
         return jsonify({"success": success, "message": message})
 
+# other endpoints that pawan request:
+#    - 
+#    -
+#    -
+#    -
+#    -
+#    -
+
+
+
+@app.route("/get_all_pod_points")
+@jwt_required()
+def get_all_pod_points():
+    # get the unique pods that are registered.
+    # accumulate, for each pod, the fellows that are registered.
+    # finally, accrue the individual points for those fellows, tie them back to the pods, done.
+
+    # for now, return a mock representation
+    return jsonify({
+        "success": True,
+        "message": "Successfully retreived points for all pods",
+        "data": {
+            "Pod 0.0.1": 758,
+            "Pod 0.0.2": 8694,
+            "Pod 0.0.3": 565,
+            "Pod 0.0.4": 2003
+        }
+    })
+
 
 @app.route("/get_pod_points")
 @jwt_required()
