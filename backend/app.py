@@ -262,7 +262,7 @@ def create_event():
     Returns:
         Status request: The id of the object created.
     """
-    data = request.form
+    data = request.get_json(silent=True)['data']
 
     event_name = data["name"]
     start_time_f = data["start_time"]
