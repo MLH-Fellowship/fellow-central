@@ -439,11 +439,11 @@ def serialize_user(status, message, user=None):
         return jsonify(response)
 
     data = {}
-    data["id"] = user.id,
-    data["name"] = user.name,
-    data["email"] = user.email,
-    data["role"] = user.role,
-    data["points_total"] = user.points_total,
+    data["id"] = user.id
+    data["name"] = user.name
+    data["email"] = user.email
+    data["role"] = user.role
+    data["points_total"] = user.points_total
     data["avatar_url"] = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
         user_id=user.id,
         avatar_hash=user.avatar
