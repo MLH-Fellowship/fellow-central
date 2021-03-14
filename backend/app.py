@@ -166,7 +166,7 @@ def add_points():
     """
     Add points
     """
-    data = request.json
+    data = request.get_json(silent=True)['data']
 
     amount = data['amount']
     assignee = data['assignee']
@@ -237,7 +237,7 @@ def add_points():
     db.session.add(new_point)
 
     # Add to user's total points
-    user.points_total += amount
+    user.points_total += int(amount)
 
     db.session.commit()
 
