@@ -299,28 +299,127 @@ def create_event():
         return jsonify({"success": success, "message": message})
 
 
+@app.route("/get_pod_points")
+@jwt_required()
+def get_pod_points():
+    """Return all the points for a single pod.
+
+    Returns:
+        json: Payload containing the pod name and the points.
+    """
+
+    pod = request.args["pod"]
+
+    # Ideally this would be something like:
+    # SELECT SUM(points_total)
+    # FROM users
+    # WHERE role=pod;
+    #
+    # But I honestly have NO clue how to do this with SQL alchemy syntax.
+
+    fellows_in_pod = User.query.filter_by(role = pod)
+    if fellows_in_pod is not None:
+
+        points = 0
+        for fellow in fellows_in_pod:
+            points = points + fellow.points_total
+
+        return jsonify({
+            "success": True,
+            "message": "Pod found.",
+            str(pod): points
+        })
+
+    return jsonify({
+        "success": False,
+        "message": "Pod not found."
+    })
+
+
+def serialize_user(status, message, user=None):
+
+    if user is None:
+        return jsonify({
+            "success": status,
+            "message": message,
+        })
+
+    return jsonify({
+        "success": status,
+        "message": message,
+        "data": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "points_total": user.points_total,
+            "avatar_url": "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
+                user_id=session.get("discord_id"),
+                avatar_hash=session.get("avatar")
+            )
+        }
+    })
+
+
 @app.route("/get_user")
 @jwt_required()
 def get_user():
+    """Obtain user information. If a user is an admin, they can provide the optional "name" parameter
+    to their GET request to obtain details about any user.
+    If the user is a pod fellow, they can inquire about themselves only.
+
+    Returns:
+        json: payload describing conditions of query, success/failure and potentially user data.
+    """
     discord_id = get_jwt_identity()
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
-        return {
-            "success": False,
-            "message": "User not found"
-        }
+        return serialize_user(False, "User not found.")
+
     else:
-        return jsonify({
-            "success": True,
-            "message": "User found",
-            "data": {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "role": user.role,
-                "points_total": user.points_total
-            }
+        # check if this is a fellow inquiring about their point total,
+        # or if this is an admin inquiring about a fellow's total.
+        if user.role == "admin":
+            # get the specified info for admin
+            r_discord_display_name = request.args.get('name')
+            r_user = User.query.filter_by(name=r_discord_display_name).first()
+            if r_user is None:
+                return serialize_user(False, "The requested fellow was not found.")
+
+            else:
+                return serialize_user(True, "Fellow found.", r_user)
+
+        else:
+            return serialize_user(True, "Found your user.", user)
+
+
+@app.route("/recent_points")
+@jwt_required()
+def recent_points():
+    num_entries = int(request.args["num_entries"])
+
+    # Ideally should be something like this:
+    # SELECT name, timestamp, amount FROM
+    #   points LEFT JOIN user ON user.id = points.id
+    #   DESC LIMIT num_entries
+
+    recent_points = reversed(Points.query.order_by(Points.timestamp)[1:num_entries])
+
+    # FIXME: This is a hack. Join with Users table to get the *Discord* name, not the unique ID.
+    data = []
+    for point in recent_points:
+        data.append({
+            "timestamp": point.timestamp,
+            "amount": point.amount,
+            "user": User.query.filter_by(id=point.assignee).first().name
         })
+
+    return jsonify({
+        "success": True,
+        "message": "{} out of {} entries found.".format(len(data), num_entries),
+        "data": data,
+    })
+
 
 if __name__ == '__main__':
     with app.app_context():
