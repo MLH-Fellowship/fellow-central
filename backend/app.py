@@ -434,6 +434,33 @@ def get_user():
         else:
             return serialize_user(True, "Found your user.", user)
 
+ 
+@app.route("/recent_points")
+@jwt_required()
+def recent_points():
+    num_entries = int(request.args["num_entries"])
+
+    # Ideally should be something like this:
+    # SELECT name, timestamp, amount FROM
+    #   points LEFT JOIN user ON user.id = points.id
+    #   DESC LIMIT num_entries
+
+    recent_points = reversed(Points.query.order_by(Points.timestamp)[1:num_entries])
+
+    # FIXME: This is a hack. Join with Users table to get the *Discord* name, not the unique ID.
+    data = []
+    for point in recent_points:
+        data.append({
+            "timestamp": point.timestamp,
+            "amount": point.amount,
+            "user": User.query.filter_by(id=point.assignee).first().name
+        })
+          
+    return jsonify({
+        "success": True,
+        "message": "{} out of {} entries found.".format(len(data), num_entries),
+        "data": data,
+    })
 
 @app.route("/get_points_history")
 def get_points_history():
@@ -460,6 +487,38 @@ def get_points_history():
             "success": True,
             "message": "Points history fetched successfully",
             "data": points_history_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {e}"
+        })
+
+
+@app.route("/get_top_fellows")
+def get_top_fellows():
+
+    try:
+        n = request.args.get('n') or 10  # Default 10
+
+        top_fellows = User.query.filter(User.role != 'admin').order_by(
+            User.points_total.desc()).limit(n).all()
+
+        top_fellows_data = []
+
+        for fellow in top_fellows:
+            fellow_data = {
+                "name": fellow.name,
+                "points_total": fellow.points_total
+            }
+
+            top_fellows_data.append(fellow_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Top fellows fetched successfully",
+            "data": top_fellows_data
         })
 
     except Exception as e:
