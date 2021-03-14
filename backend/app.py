@@ -329,17 +329,15 @@ def get_points_history():
     try:
         n = request.args.get('n') or 20  # Default 20
 
-        points_history = Points.query.order_by(
+        points_history = Points.query.join(User).order_by(
             Points.timestamp.desc()).limit(n).all()
 
         points_history_data = []
 
         for points in points_history:
-            # Get assignee's discord username
-            assignee = User.query.filter_by(id=points.assignee).first()
             points_data = {
                 "amount": points.amount,
-                "assignee": assignee.name,
+                "assignee": points.user.name,
                 "description": points.description,
                 "event_id": points.event_id,
                 "timestamp": points.timestamp
