@@ -396,22 +396,22 @@ def get_user():
 @app.route("/recent_points")
 @jwt_required()
 def recent_points():
-    num_entries = request.args("num_entries")
+    num_entries = int(request.args["num_entries"])
 
     # Ideally should be something like this:
     # SELECT name, timestamp, amount FROM
     #   points LEFT JOIN user ON user.id = points.id
     #   DESC LIMIT num_entries
 
-    # TODO: Join with Users table to get the *Discord* name, not the unique ID.
-    recent_points = session.query(Points).order_by(Points.timestamp)[0:num_entries]
+    recent_points = reversed(Points.query.order_by(Points.timestamp)[1:num_entries])
 
+    # FIXME: This is a hack. Join with Users table to get the *Discord* name, not the unique ID.
     data = []
     for point in recent_points:
         data.append({
             "timestamp": point.timestamp,
             "amount": point.amount,
-            "user": point.id,
+            "user": User.query.filter_by(id=point.assignee).first().name
         })
 
     return jsonify({
