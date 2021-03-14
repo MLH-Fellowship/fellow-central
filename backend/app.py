@@ -552,7 +552,7 @@ def get_total_fellows():
         json: json payload containing requested information
     """
     try:
-        num_fellows = User.query.count()
+        num_fellows = User.query.filter(User.role != 'admin').count()
     
         return jsonify({
             "success": True,
