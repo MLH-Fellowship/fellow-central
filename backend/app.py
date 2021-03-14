@@ -465,6 +465,8 @@ def get_user():
         json: payload describing conditions of query, success/failure and potentially user data.
     """
 
+    discord_id = get_jwt_identity()
+            
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
         return serialize_user(False, "User not found.")
