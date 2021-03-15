@@ -107,4 +107,4 @@ async def on_message(message):
                     await message.channel.send(data.json()["message"])
 
 
-client.run(os.environ("DISCORD_BOT_TOKEN"))
+client.run(os.getenv("DISCORD_BOT_TOKEN"))
