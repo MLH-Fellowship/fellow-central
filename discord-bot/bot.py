@@ -13,6 +13,7 @@ BASE_URL = "https://fellow-central.herokuapp.com"
 CHECK_USER_REGISTRATION_ENDPOINT = BASE_URL + "/check-user-registration-status"
 ADD_POINT = BASE_URL + "/admin/add_points"
 GET_TOP_FELLOWS = BASE_URL + "/get_top_fellows"
+GET_POINT = BASE_URL + "/discord/get_user_points"
 
 
 client = discord.Client()
@@ -27,9 +28,12 @@ async def on_message(message):
     bot_id = client.user.id
     if str(bot_id) in message.content:
         option = str(message.content).split(f"<@!{bot_id}> ")[1].split(",")[0]
+        print(option)
 
         if option == "view":
-            pass
+            data = requests.get(GET_POINT + f"?id={message.author.id}")
+            print(data.json())
+            await message.channel.send(data.json()["data"]["points_total"])
 
         elif option == "rank":
             data = requests.get(GET_TOP_FELLOWS)
@@ -63,11 +67,17 @@ async def on_message(message):
                     await message.channel.send("Thanks for giving me a point too!")
                 else:
                     data = requests.post(ADD_POINT, json={
-                        "amount": amount,
-                        "assignee": str(assignee),
-                        "description": str(description)
+                        "data": {
+                            "amount": amount,
+                            "assignee": str(assignee),
+                            "description": str(description)
+                        }
                     })
-                    await message.channel.send(data.json()["message"])
+                    print(data.text)
+                    try:
+                        await message.channel.send(data.json()["message"])
+                    except:
+                        await message.channel.send("Are you sure you registered at https://leagueoffellow.netlify.app")
             else:
                 await message.channel.send("Admin only")
 
@@ -81,12 +91,16 @@ async def on_message(message):
             Tag the bot with add command, you can add point to fellow if you are an admin
             """)
 
+        elif option == "spam":
+            await message.channel.send(f"<@!{bot_id}> Invalid command")
+
         else:
             if str(message.author.id) != str(bot_id):
                 await message.channel.send(f"Invalid command, type `<@!{bot_id}> help` for help.")
 
     else:
         if str(message.author.id) != str(bot_id):
+            print(message.content)
             data = requests.post(ADD_POINT, json={
                 "data": {
                     "amount": 1,
