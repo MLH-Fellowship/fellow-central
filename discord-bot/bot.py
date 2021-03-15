@@ -82,7 +82,8 @@ async def on_message(message):
             """)
 
         else:
-            await message.channel.send(f"Invalid command, type `<@!{bot_id}> help` for help.")
+            if str(message.author.id) != str(bot_id):
+                await message.channel.send(f"Invalid command, type `<@!{bot_id}> help` for help.")
 
     else:
         if str(message.author.id) != str(bot_id):
@@ -105,6 +106,8 @@ async def on_message(message):
                     except ValueError:
                         pass
                     await message.channel.send(data.json()["message"])
+            else:
+                await message.channel.send(data.json()["message"])
 
 
 client.run(os.getenv("DISCORD_BOT_TOKEN"))
