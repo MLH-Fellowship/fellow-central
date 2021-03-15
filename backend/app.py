@@ -90,8 +90,7 @@ def discord_callback():
     # Get user's information
     data = requests.get(
         "https://discord.com/api/v8/users/@me",
-        headers={
-            "Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     email = data.json()["email"]
@@ -111,8 +110,7 @@ def discord_callback():
     # get all the guilds that user's in
     guilds = requests.get(
         "https://discord.com/api/v8/users/@me/guilds",
-        headers={
-            "Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     # check if the user is in the fellowship guide
@@ -151,11 +149,9 @@ def discord_callback():
         if User.query.filter_by(id=discord_id).first():
             message = "Success: Logged in!"
         else:
-            new_user = User(id=discord_id,
-                            name=screen_name,
-                            email=email,
-                            role=role,
-                            avatar=avatar)
+            new_user = User(
+                id=discord_id, name=screen_name, email=email, role=role, avatar=avatar
+            )
 
             db.session.add(new_user)
             db.session.commit()
@@ -165,16 +161,16 @@ def discord_callback():
     return redirect(f"{FRONTEND_URL}?token={jwt_token}&msg={message}")
 
 
-@app.route("/admin/add_points", methods=['POST'])
+@app.route("/admin/add_points", methods=["POST"])
 def add_points():
     """
     Add points
     """
-    data = request.get_json(silent=True)['data']
+    data = request.get_json(silent=True)["data"]
 
-    amount = data.get('amount')
-    assignee = data['assignee']
-    description = data['description']
+    amount = data.get("amount")
+    assignee = data["assignee"]
+    description = data["description"]
     event_id = None
 
     # if user's discord id is given, change assignee to discord username
@@ -186,58 +182,61 @@ def add_points():
 
     discord_id = user.id
 
-    if description == 'Event':
-        event_id = data.get('event_id')
-        secret_input = data.get('secret_input')
+    if description == "Event":
+        event_id = data.get("event_id")
+        secret_input = data.get("secret_input")
         if event_id is None:
-            return jsonify({
-                "success": False,
-                "message": 'Please specify the event id'
-            })
+            return jsonify({"success": False, "message": "Please specify the event id"})
         if secret_input is None:
-            return jsonify({
-                "success": False,
-                "message": 'Please input the secret code'
-            })
+            return jsonify(
+                {"success": False, "message": "Please input the secret code"}
+            )
 
         # Check if points are already claimed for event
         if Points.query.filter_by(event_id=event_id, assignee=discord_id).first():
-            return jsonify({
-                "success": False,
-                "message": 'Event points already claimed'
-            })
+            return jsonify(
+                {"success": False, "message": "Event points already claimed"}
+            )
         else:
             # Check if input matches event secret code
             event = Event.query.filter_by(id=event_id).first()
             if event.secret_code == secret_input:
                 amount = event.points_amount
-                message = f'{amount} points added to {assignee} for Event {event.name}'
+                message = f"{amount} points added to {assignee} for Event {event.name}"
                 success = True
             else:
-                return jsonify({
-                    "success": False,
-                    "message": f'The code {secret_input} is incorrect for Event {event.name}'
-                })
+                return jsonify(
+                    {
+                        "success": False,
+                        "message": f"The code {secret_input} is incorrect for Event {event.name}",
+                    }
+                )
 
-    elif description == 'Discord':
+    elif description == "Discord":
         # Check daily limit of 5 messages is exceeded
-        discord_points_today = Points.query.filter_by(description='Discord', assignee=discord_id) \
-            .filter(func.date(Points.timestamp) == func.date(func.now())).all()
+        discord_points_today = (
+            Points.query.filter_by(description="Discord", assignee=discord_id)
+            .filter(func.date(Points.timestamp) == func.date(func.now()))
+            .all()
+        )
         if len(discord_points_today) >= 5:
-            return jsonify({
-                "success": False,
-                "message": 'Daily limit for Discord activity points reached'
-            })
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Daily limit for Discord activity points reached",
+                }
+            )
         else:
-            message = f'{amount } points added to {assignee} for Discord activity'
+            message = f"{amount } points added to {assignee} for Discord activity"
             success = True
     else:
-        message = f'{amount} points added to {assignee} for {description}'
+        message = f"{amount} points added to {assignee} for {description}"
         success = True
 
     # Create a Points in the points table
-    new_point = Points(amount=amount, assignee=discord_id,
-                       description=description, event_id=event_id)
+    new_point = Points(
+        amount=amount, assignee=discord_id, description=description, event_id=event_id
+    )
     db.session.add(new_point)
 
     # Add to user's total points
@@ -245,18 +244,20 @@ def add_points():
 
     db.session.commit()
 
-    return jsonify({
-        "success": success,
-        "message": message,
-        "data": {
-            "id": new_point.id,
-            "amount": new_point.amount,
-            "assignee": new_point.assignee,
-            "description": new_point.description,
-            "event_id": new_point.event_id,
-            "timestamp": new_point.timestamp
+    return jsonify(
+        {
+            "success": success,
+            "message": message,
+            "data": {
+                "id": new_point.id,
+                "amount": new_point.amount,
+                "assignee": new_point.assignee,
+                "description": new_point.description,
+                "event_id": new_point.event_id,
+                "timestamp": new_point.timestamp,
+            },
         }
-    })
+    )
 
 
 @app.route("/admin/create_event", methods=["POST"])
@@ -266,7 +267,7 @@ def create_event():
     Returns:
         Status request: The id of the object created.
     """
-    data = request.get_json(silent=True)['data']
+    data = request.get_json(silent=True)["data"]
 
     event_name = data["name"]
     start_time_f = data["start_time"]
@@ -320,7 +321,7 @@ def get_all_pod_points():
 
         for pod in all_pods:
 
-            fellows_in_pod = User.query.filter_by(role = str(pod.role))
+            fellows_in_pod = User.query.filter_by(role=str(pod.role))
             if fellows_in_pod is not None:
 
                 points = 0
@@ -329,23 +330,22 @@ def get_all_pod_points():
 
                 data[str(pod.role)] = points
 
-        return jsonify({
-            "success": True,
-            "message": "Successfully retrieved points for all pods",
-            "data": data
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Successfully retrieved points for all pods",
+                "data": data,
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error: {e}"
-        })
+        return jsonify({"success": False, "message": f"Error: {e}"})
 
-          
+
 @app.route("/get_events")
 @jwt_required()
 def get_events():
-    """ Get all events data
+    """Get all events data
 
     Returns:
         json: payload describing conditions of query, success/failure and events data.
@@ -370,28 +370,27 @@ def get_events():
 
             # Check if points are already claimed for event
             if Points.query.filter_by(event_id=event.id, assignee=discord_id).first():
-                event_data['points_claimed'] = True
+                event_data["points_claimed"] = True
             else:
-                event_data['points_claimed'] = False
+                event_data["points_claimed"] = False
 
-            if user.role == 'admin':
-                event_data['secret_code'] = event.secret_code
+            if user.role == "admin":
+                event_data["secret_code"] = event.secret_code
 
             events_data.append(event_data)
 
-        return jsonify({
-            "success": True,
-            "message": "Events fetched successfully",
-            "data": events_data
-        })
-        
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error: {e}"
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Events fetched successfully",
+                "data": events_data,
+            }
+        )
 
-          
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {e}"})
+
+
 @app.route("/get_pod_points")
 @jwt_required()
 def get_pod_points():
@@ -410,23 +409,16 @@ def get_pod_points():
     #
     # But I honestly have NO clue how to do this with SQL alchemy syntax.
 
-    fellows_in_pod = User.query.filter_by(role = pod)
+    fellows_in_pod = User.query.filter_by(role=pod)
     if fellows_in_pod is not None:
 
         points = 0
         for fellow in fellows_in_pod:
             points = points + fellow.points_total
 
-        return jsonify({
-            "success": True,
-            "message": "Pod found.",
-            str(pod): points
-        })
+        return jsonify({"success": True, "message": "Pod found.", str(pod): points})
 
-    return jsonify({
-        "success": False,
-        "message": "Pod not found."
-    })
+    return jsonify({"success": False, "message": "Pod not found."})
 
 
 def serialize_user(status, message, user=None):
@@ -439,15 +431,25 @@ def serialize_user(status, message, user=None):
         return jsonify(response)
 
     data = {}
+
+    if user.avatar is None:
+        last_digit = int(user.name[-1])
+        data["avatar_url"] = "https://cdn.discordapp.com/embed/avatars/{}.png".format(
+            last_digit % 5
+        )
+
+    else:
+        data[
+            "avatar_url"
+        ] = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
+            user_id=user.id, avatar_hash=user.avatar
+        )
+
     data["id"] = user.id
     data["name"] = user.name
     data["email"] = user.email
     data["role"] = user.role
     data["points_total"] = user.points_total
-    data["avatar_url"] = "https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.png?size=128".format(
-        user_id=user.id,
-        avatar_hash=user.avatar
-    )
 
     response["data"] = data
 
@@ -466,7 +468,7 @@ def get_user():
     """
 
     discord_id = get_jwt_identity()
-            
+
     user = User.query.filter_by(id=discord_id).first()
     if user is None:
         return serialize_user(False, "User not found.")
@@ -476,7 +478,7 @@ def get_user():
         # or if this is an admin inquiring about a fellow's total.
         if user.role == "admin":
             # get the specified info for admin
-            r_discord_display_name = request.args.get('name')
+            r_discord_display_name = request.args.get("name")
             r_user = User.query.filter_by(name=r_discord_display_name).first()
             if r_user is None:
                 return serialize_user(False, "The requested fellow was not found.")
@@ -487,7 +489,7 @@ def get_user():
         else:
             return serialize_user(True, "Found your user.", user)
 
- 
+
 @app.route("/recent_points")
 @jwt_required()
 def recent_points():
@@ -503,26 +505,32 @@ def recent_points():
     # FIXME: This is a hack. Join with Users table to get the *Discord* name, not the unique ID.
     data = []
     for point in recent_points:
-        data.append({
-            "timestamp": point.timestamp,
-            "amount": point.amount,
-            "user": User.query.filter_by(id=point.assignee).first().name
-        })
-          
-    return jsonify({
-        "success": True,
-        "message": "{} out of {} entries found.".format(len(data), num_entries),
-        "data": data,
-    })
+        data.append(
+            {
+                "timestamp": point.timestamp,
+                "amount": point.amount,
+                "user": User.query.filter_by(id=point.assignee).first().name,
+            }
+        )
+
+    return jsonify(
+        {
+            "success": True,
+            "message": "{} out of {} entries found.".format(len(data), num_entries),
+            "data": data,
+        }
+    )
+
 
 @app.route("/get_points_history")
 @jwt_required()
 def get_points_history():
     try:
-        n = request.args.get('n') or 20  # Default 20
+        n = request.args.get("n") or 20  # Default 20
 
-        points_history = Points.query.join(User).order_by(
-            Points.timestamp.desc()).limit(n).all()
+        points_history = (
+            Points.query.join(User).order_by(Points.timestamp.desc()).limit(n).all()
+        )
 
         points_history_data = []
 
@@ -532,7 +540,7 @@ def get_points_history():
                 "assignee": points.user.name,
                 "description": points.description,
                 "event_id": points.event_id,
-                "timestamp": points.timestamp
+                "timestamp": points.timestamp,
             }
 
             points_history_data.append(points_data)
@@ -541,54 +549,55 @@ def get_points_history():
         discord_id = get_jwt_identity()
         user = User.query.filter_by(id=discord_id).first()
         if user.role != "admin":
-            points_history_data = list(filter(lambda p: p['assignee'] == user.name, points_history_data))
+            points_history_data = list(
+                filter(lambda p: p["assignee"] == user.name, points_history_data)
+            )
 
-        return jsonify({
-            "success": True,
-            "message": "Points history fetched successfully",
-            "data": points_history_data
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Points history fetched successfully",
+                "data": points_history_data,
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error: {e}"
-        })
+        return jsonify({"success": False, "message": f"Error: {e}"})
 
 
 @app.route("/get_top_fellows")
 def get_top_fellows():
 
     try:
-        n = request.args.get('n') or 10  # Default 10
+        n = request.args.get("n") or 10  # Default 10
 
-        top_fellows = User.query.filter(User.role != 'admin').order_by(
-            User.points_total.desc()).limit(n).all()
+        top_fellows = (
+            User.query.filter(User.role != "admin")
+            .order_by(User.points_total.desc())
+            .limit(n)
+            .all()
+        )
 
         top_fellows_data = []
 
         for fellow in top_fellows:
-            fellow_data = {
-                "name": fellow.name,
-                "points_total": fellow.points_total
-            }
+            fellow_data = {"name": fellow.name, "points_total": fellow.points_total}
 
             top_fellows_data.append(fellow_data)
 
-        return jsonify({
-            "success": True,
-            "message": "Top fellows fetched successfully",
-            "data": top_fellows_data
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Top fellows fetched successfully",
+                "data": top_fellows_data,
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": f"Error: {e}"
-        })
+        return jsonify({"success": False, "message": f"Error: {e}"})
 
-          
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run()
