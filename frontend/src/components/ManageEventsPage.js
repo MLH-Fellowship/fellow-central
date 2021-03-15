@@ -40,7 +40,7 @@ const ManageEventsPage = ({ auth, ...props }) => {
     // Call API
     try {
       setLoading(true)
-      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/create_event`, {
+      await axios.post(`${process.env.REACT_APP_API_ENDPOINT}/admin/create_event`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },

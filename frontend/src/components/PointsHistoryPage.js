@@ -4,7 +4,6 @@ import PageHeader from './PageHeader'
 import InfoCard from './InfoCard'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PulseLoader from "react-spinners/PulseLoader";
 

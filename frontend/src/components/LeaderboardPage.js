@@ -60,10 +60,12 @@ const LeaderboardPage = ({ auth }) => {
       // }
 
       // Store response data
-      const pod_names = Object.keys(response.data.pod_list);
+      const pod_names = Object.keys(response.data.data);
       const pod_list = []
       pod_names.forEach(pod => {
-        pod_list.push({ pod: pod, value: response.data.pod_list[pod] })
+        if(pod !== 'admin') {
+          pod_list.push({ pod: pod, value: response.data.data[pod] })
+        }
       })
       pod_list.sort((a, b) => b.value - a.value)
 

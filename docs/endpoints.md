@@ -105,6 +105,39 @@ Example unsuccessful output
 
 ---
 
+## **GET** `/get_total_registered_fellows`
+
+### Input
+
+```HTTP
+POST /get_total_registered_fellows HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+```
+
+### Output
+
+Example successful output
+
+```json
+{
+    "success": true,
+    "message": "Number of fellows retrieved successfully",
+    "data": 193
+}
+```
+
+Example unsuccessful output
+
+```json
+{
+    "success": false,
+    "message": "Error: <ERROR_MESSAGE>"
+}
+```
+
+---
+
 ## **GET** `/get_user`
 
 ### Input
@@ -225,6 +258,7 @@ Example successful output
         }
     ]
 }
+```
 
 Example unsuccessful output
 
