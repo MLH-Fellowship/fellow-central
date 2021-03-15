@@ -15,20 +15,23 @@ const SendPointsPage = ({ auth, ...props }) => {
   const [points, setPoints] = useState('');
   const [recentPoints, setRecentPoints] = useState([]);
   const [loading, setLoading] = useState(false)
+  const [pointsLoading, setPointsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchEventsData = async () => {
+    const fetchPointsData = async () => {
+      setPointsLoading(true)
       const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_points_history`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
       });
+      setPointsLoading(false)
 
       // Store response data
       setRecentPoints(response.data.data)
     }
 
-    fetchEventsData();
+    fetchPointsData();
   }, [auth.token])
 
   const handleSubmit = async (event) => {
@@ -87,7 +90,7 @@ const SendPointsPage = ({ auth, ...props }) => {
           </form>
         </InfoCard>
         <InfoCard title="Recent Points">
-          {recentPoints.length > 0 ?
+          {pointsLoading === false ?
             <div className="table-container">
               <table className="table">
                 <thead>

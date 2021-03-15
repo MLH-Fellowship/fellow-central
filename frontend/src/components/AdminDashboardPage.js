@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 const infoCollection = [
   {
     value: 7,
-    title: 'Points Claimed'
+    title: 'Events created'
   },
 ]
 
