@@ -477,6 +477,10 @@ def get_user():
         # check if this is a fellow inquiring about their point total,
         # or if this is an admin inquiring about a fellow's total.
         if user.role == "admin":
+            # check if the admin is requesting a user
+            if request.args.get("name") is None:
+                # they're not, so just return the admin
+                return serialize_user(True, "Admin found!", user)
             # get the specified info for admin
             r_discord_display_name = request.args.get("name")
             r_user = User.query.filter_by(name=r_discord_display_name).first()
