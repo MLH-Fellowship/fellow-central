@@ -142,7 +142,7 @@ def discord_callback():
         for r in roles.json():
             if r["name"] == "admin" and r["id"] in user_roles:
                 role = "admin"
-            elif r["name"][4] == CURRENT_FELLOWSHIP and r["id"] in user_roles:
+            elif 'Pod' in r["name"] and r["name"][4] == CURRENT_FELLOWSHIP and r["id"] in user_roles:
                 role = r["name"]
 
         session["role"] = role
