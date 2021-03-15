@@ -42,9 +42,19 @@ async def on_message(message):
             # only admin
             if get(message.author.roles, name="admin"):
                 splitted_msg = str(message.content).split(f"<@!{bot_id}> ")[1].split(",")
-                amount = int(splitted_msg[1])
-                assignee = splitted_msg[2][4:-2]
-                description = splitted_msg[3]
+
+                try:
+                    amount = int(splitted_msg[1])
+                    assignee = splitted_msg[2][4:-2]
+                    description = splitted_msg[3]
+                except IndexError:
+                    await message.channel.send("Invalid, make sure to provide in this order: amount, assignee (tag them), description")
+
+                try:
+                    int(amount)
+                    int(assignee)
+                except:
+                    await message.channel.send("Invalid, make sure to provide in this order: amount, assignee (tag them), description")
 
                 print(assignee, message.author.id)
                 if str(assignee) == str(message.author.id):
