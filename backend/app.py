@@ -90,7 +90,8 @@ def discord_callback():
     # Get user's information
     data = requests.get(
         "https://discord.com/api/v8/users/@me",
-        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={
+            "Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     email = data.json()["email"]
@@ -110,7 +111,8 @@ def discord_callback():
     # get all the guilds that user's in
     guilds = requests.get(
         "https://discord.com/api/v8/users/@me/guilds",
-        headers={"Authorization": f"Bearer {session.get('discord_access_token')}"},
+        headers={
+            "Authorization": f"Bearer {session.get('discord_access_token')}"},
     )
 
     # check if the user is in the fellowship guide
@@ -494,36 +496,30 @@ def get_user():
             return serialize_user(True, "Found your user.", user)
 
 
-@app.route("/recent_points")
-@jwt_required()
-def recent_points():
-    num_entries = int(request.args["num_entries"])
+@app.route("/discord/get_user_points")
+def discord_get_user_points():
+    discord_id = request.args.get("id")
 
-    # Ideally should be something like this:
-    # SELECT name, timestamp, amount FROM
-    #   points LEFT JOIN user ON user.id = points.id
-    #   DESC LIMIT num_entries
+    if discord_id is None:
+        return jsonify({
+            "success": False,
+            "message": "Please provide a discord_id"
+        })
 
-    recent_points = reversed(Points.query.order_by(Points.timestamp)[1:num_entries])
-
-    # FIXME: This is a hack. Join with Users table to get the *Discord* name, not the unique ID.
-    data = []
-    for point in recent_points:
-        data.append(
-            {
-                "timestamp": point.timestamp,
-                "amount": point.amount,
-                "user": User.query.filter_by(id=point.assignee).first().name,
-            }
-        )
-
-    return jsonify(
-        {
+    user = User.query.filter_by(id=discord_id).first()
+    if user is None:
+        return jsonify({
+            "success": False,
+            "message": "Please provide a discord_id",
+        })
+    else:
+        return jsonify({
             "success": True,
-            "message": "{} out of {} entries found.".format(len(data), num_entries),
-            "data": data,
-        }
-    )
+            "message": "User points fetched successfully",
+            "data": {
+                "points_total": user.points_total
+            }
+        })
 
 
 @app.route("/get_points_history")
@@ -533,7 +529,8 @@ def get_points_history():
         n = request.args.get("n") or 20  # Default 20
 
         points_history = (
-            Points.query.join(User).order_by(Points.timestamp.desc()).limit(n).all()
+            Points.query.join(User).order_by(
+                Points.timestamp.desc()).limit(n).all()
         )
 
         points_history_data = []
@@ -554,7 +551,8 @@ def get_points_history():
         user = User.query.filter_by(id=discord_id).first()
         if user.role != "admin":
             points_history_data = list(
-                filter(lambda p: p["assignee"] == user.name, points_history_data)
+                filter(lambda p: p["assignee"] ==
+                       user.name, points_history_data)
             )
 
         return jsonify(
@@ -585,7 +583,8 @@ def get_top_fellows():
         top_fellows_data = []
 
         for fellow in top_fellows:
-            fellow_data = {"name": fellow.name, "points_total": fellow.points_total}
+            fellow_data = {"name": fellow.name,
+                           "points_total": fellow.points_total}
 
             top_fellows_data.append(fellow_data)
 
@@ -611,20 +610,20 @@ def get_total_fellows():
     """
     try:
         num_fellows = User.query.filter(User.role != 'admin').count()
-    
+
         return jsonify({
             "success": True,
             "message": "Number of fellows retrieved successfully",
             "data": num_fellows
         })
-        
+
     except Exception as e:
         return jsonify({
             "success": False,
             "message": f"Error: {e}"
         })
 
-          
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
