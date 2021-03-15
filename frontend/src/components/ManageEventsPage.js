@@ -18,14 +18,17 @@ const ManageEventsPage = ({ auth, ...props }) => {
   const [secretCode, setSecretCode] = useState('');
   const [points, setPoints] = useState('');
   const [loading, setLoading] = useState(false)
+  const [eventsLoading, setEventsLoading] = useState(false);
 
   useEffect(() => {
     const fetchEventsData = async () => {
+      setEventsLoading(true)
       const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/get_events`, {
         headers: {
           "Authorization": `Bearer ${auth.token}`,
         },
       });
+      setEventsLoading(false)
 
       // Store response data
       setEvents([...response.data.data].reverse())
@@ -115,7 +118,7 @@ const ManageEventsPage = ({ auth, ...props }) => {
           </form>
         </InfoCard>
         <InfoCard title="Events">
-          {events.length > 0 ? 
+          {eventsLoading === false ? 
             <div className="table-container">
               <table className="table">
                 <thead>
